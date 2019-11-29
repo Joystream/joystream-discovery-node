@@ -1,0 +1,79 @@
+type Category {
+  id: ID!
+  parentId: ID
+  title: String
+  description: String
+  createdAtBlockNumber: Int!
+  createdAtMoment: Int!
+  deleted: Boolean!
+  archived: Boolean!
+  numDirectSubcategories: Int
+  numDirectModeratedThreads: Int
+  positionInParentCategory: Int
+  accountId: ID
+
+  blockId: Int
+  extrinsicIdx: Int
+  eventIdx: Int
+
+  # relationships
+  threads: [Thread!]
+}
+
+type Thread {
+  id: ID!
+  title: String
+
+  nrInCategory: Int
+  numUnmoderatedPosts: Int
+  numModeratedPosts: Int
+  createdAtBlockNumber: Int
+  createdAtMoment: Int
+  authorId: ID
+
+  # relationships
+  category: Category
+  posts: [Post!]
+  moderationActions: [ModerationAction!]
+
+  # block: Block
+}
+
+type Post {
+  id: ID!
+
+  nrInThread: Int
+  currentText: String
+  createdAtBlockNumber: Int!
+  createdAtMoment: Int!
+
+  history: [PostTextChangeHistory!]
+
+  # relationships
+  thread: Thread
+}
+
+type PostTextChangeHistory {
+  id: ID!
+  text: String!
+  expiredAtBlockNumber: Int!
+  expiredAtMoment: Int!
+
+  # relationships
+  post: Post!
+  authorId: Int!
+}
+
+type ModerationAction {
+  id: ID!
+  moderatorId: Int
+  moderationRationales: [ModerationRationale!]
+  moderatedAtBlockNumber: Int
+  moderatedAtMoment: Int
+}
+
+type ModerationRationale {
+  id: ID!
+  moderationAction: ModerationAction!
+  rationale: Int
+}

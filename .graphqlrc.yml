@@ -1,0 +1,5 @@
+schema: 'schemas/joystream_forum.graphql'
+documents: 'packages/app/src/components/**/*.graphql'
+extensions:
+  customExtension:
+    foo: true
