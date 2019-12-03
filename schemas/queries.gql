@@ -3,18 +3,18 @@ union SearchResult = Category | Thread | Post | PostTextChangeHistory
 type Query {
     
     # returns all Categories matching text in title or description
-    category(text: String): Category
+    category(text: String): [Category]!
 
 
     # returns all Threads matching text in title or description
-    thread(text: String): Thread
+    thread(text: String): [Thread]!
 
     # returns all Posts matching text in title or description
-    post(text: String): Post
+    post(text: String): [Post]!
 
     # Searches Category, Thread and Post for matching text
     # For Posts, also searches PostTextChangeHistory
     # 
-    search(text: String): SearchResult
+    search(text: String): [SearchResult]!
 
 }
