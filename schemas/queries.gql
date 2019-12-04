@@ -1,4 +1,3 @@
-""""""
 union SearchResult = Category | Thread | Post | PostTextChangeHistory
 
 type Query {
