@@ -1,20 +1,22 @@
+""""""
 union SearchResult = Category | Thread | Post | PostTextChangeHistory
 
 type Query {
     
-    # returns all Categories matching text in title or description
-    category(text: String): [Category]!
+    """returns all Categories matching text in title or description"""
+    getCategories(text: String): [Category]!
 
 
-    # returns all Threads matching text in title or description
-    thread(text: String): [Thread]!
+    """returns all Threads matching text in title or description"""
+    getThreads(text: String): [Thread]!
 
-    # returns all Posts matching text in title or description
-    post(text: String): [Post]!
+    """returns all Posts matching text in title or description"""
+    getPosts(text: String): [Post]!
 
-    # Searches Category, Thread and Post for matching text
-    # For Posts, also searches PostTextChangeHistory
-    # 
-    search(text: String): [SearchResult]!
+    """
+    Searches Category, Thread and Post for matching text
+    For Posts, also searches PostTextChangeHistory
+    """ 
+    searchFor(text: String): [SearchResult]!
 
 }
