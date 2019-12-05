@@ -1,4 +1,4 @@
-const { gql } = require('apollo-server');
+import { gql } from 'apollo-server';
 
 const typeDefs = gql`
 """Category created in Joystream Forum module"""
@@ -152,4 +152,4 @@ type Query {
 }
 `;
 
-module.exports = typeDefs;
+export {typeDefs};

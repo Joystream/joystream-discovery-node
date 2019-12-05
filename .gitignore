@@ -1,1 +1,5 @@
+.vscode
+dist
 node_modules
+ormconfig.json
+yarn-error.log
