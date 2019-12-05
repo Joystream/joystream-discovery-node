@@ -4,7 +4,7 @@
   "description": "An apollo based GraphQL node to search harvested data from Joystream blockchain",
   "main": "dist/src/index.js",
   "scripts": {
-    "build": "tsc --rootDir ./",
+    "build": "rm -rf dist/* && tsc --rootDir ./",
     "watch": "tsc --watch --rootDir ./",
     "test": "jest",
     "start": "npm run build && nodemon dist/src/index.js",

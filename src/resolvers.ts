@@ -1,5 +1,7 @@
 export default {
     Query: {
-        x: 100
+        getCategories: (root: any, args: any, context: any) => {
+            context.dataSources.categories.getCategories()
+        }
     }
 };

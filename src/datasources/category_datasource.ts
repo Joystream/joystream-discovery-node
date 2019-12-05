@@ -10,6 +10,9 @@ export default class CategoryDataSource extends DataSource {
         this.db = connection;
     }
 
+    initialize(config: any) {
+    }
+
     async getCategories(text: string) {
         return this.db.manager.find(Category);
     }
