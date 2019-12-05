@@ -13,6 +13,9 @@ export default class CategoryDataSource extends DataSource {
     initialize(config: any) {
     }
 
+    // categoryReducer(category: Category) {
+    // }
+
     async getCategories(text: string) {
         return this.db.manager.find(Category);
     }

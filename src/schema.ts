@@ -4,7 +4,7 @@ const typeDefs = gql`
 """Category created in Joystream Forum module"""
 type Category {
   """ID of the ID in the Joystream blockchain"""
-  id: ID!
+  id: ID
   """ID of the parent Category in the Joystream blockchain"""
   parentId: ID
   """Title of the Category"""
@@ -12,13 +12,13 @@ type Category {
   """Description of the Category"""
   description: String
   """The block number where the category was created in Joystream blockchain"""
-  createdAtBlockNumber: Int!
+  createdAtBlockNumber: Int
   """The time stamp when the category was created in Joystream blockchain"""
-  createdAtMoment: Int!
+  createdAtMoment: Int
   """Deleted flag if the category has been deleted"""
-  deleted: Boolean!
+  deleted: Boolean
   """Archived flag if the category has been archived"""
-  archived: Boolean!
+  archived: Boolean
   """Number of subcategories this category has"""
   numDirectSubcategories: Int
   """Number of Threads that have at least one moderation action"""
@@ -132,7 +132,7 @@ type ModerationRationale {
 type Query {
     
     """returns all Categories matching text in title or description"""
-    getCategories(text: String): [Category]!
+    getCategories(text: String): [Category]
 
 
     """returns all Threads matching text in title or description"""

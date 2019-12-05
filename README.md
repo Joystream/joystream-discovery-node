@@ -55,3 +55,6 @@ Copy `ormconfig.json.sample` to `ormconfig.json` and change the `username`,
 Then run the service:
 
 `yarn run start`
+
+Once the service is running you can use the apollo playground to interact
+with the query service.
