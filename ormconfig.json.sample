@@ -9,7 +9,7 @@
     "synchronize": true,
     "logging": false,
     "entities": [
-      "src/entity/*.js"
+      "dist/src/entity/*.js"
     ],
     "cli": {
       "entitiesDir": "src/entity",

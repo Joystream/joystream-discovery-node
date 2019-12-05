@@ -49,7 +49,7 @@ This will put the compiled js files into `dist` folder.
 
 ### Run service
 
-Copy `ormconfig.json.sample` to `ormconfig.json` and change the `username`, 
+Copy `ormconfig.json.sample` to `ormconfig.json` and change the `username`,
 `password` and `database` to your connection settings.
 
 Then run the service:
