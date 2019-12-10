@@ -58,3 +58,5 @@ Then run the service:
 
 Once the service is running you can use the apollo playground to interact
 with the query service.
+
+The service will be available on `http://localhost:4000`
