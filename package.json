@@ -11,7 +11,7 @@
     "start:ci": "npm run build && node dist/src/index.js"
   },
   "author": "Joystream",
-  "license": "AGPL",
+  "license": "AGPL V3",
   "dependencies": {
     "@types/sequelize": "4.28.8",
     "apollo-datasource": "^0.1.3",
