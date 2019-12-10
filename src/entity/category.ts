@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryColumn } from "typeorm";
+import { Entity, Column, PrimaryColumn, OneToMany } from "typeorm";
+import { Thread } from './thread';
 
 @Entity("joystream_forum_category")
 export class Category {
@@ -67,4 +68,7 @@ export class Category {
     name: 'event_idx'
   })
   eventIdx: number;
+
+  @OneToMany(type => Thread, thread => thread.category)
+  threads: Thread[]
 };

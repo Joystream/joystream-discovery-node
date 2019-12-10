@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryColumn } from "typeorm";
+import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn } from "typeorm";
+import { Thread } from "./thread";
 
 @Entity("joystream_forum_post")
 export class Post {
@@ -51,4 +52,7 @@ export class Post {
   })
   eventIdx: number;  
 
+  @ManyToOne(type => Thread, thread => thread.posts)
+  @JoinColumn({name: 'thread_id'})
+  thread: Thread
 }
