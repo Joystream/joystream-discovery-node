@@ -148,6 +148,10 @@ type ModerationRationale {
   rationale: Int
 }
 
+# union SearchResult = Category | Thread | Post | PostTextChangeHistory
+
+union SearchResult = Category | Thread | Post
+
 type Query {
     
     """returns all Categories matching text in title or description"""
@@ -158,6 +162,12 @@ type Query {
 
     """returns all Posts matching text in title or description"""
     getPosts(text: String): [Post]!
+
+    """
+    Searches Category, Thread and Post for matching text
+    For Posts, also searches PostTextChangeHistory
+    """ 
+    searchFor(text: String): [SearchResult]!
 
 }
 `;

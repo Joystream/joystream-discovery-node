@@ -25,6 +25,28 @@ export default {
         },
         getPosts: async (root: any, args: any, context: any) => {
             return await context.dataSources.posts.getPosts();
+        },
+        searchFor: async (root: any, args: any, context: any) => {
+            // let results: any[] = [];
+            // results.concat(await context.dataSources.posts.getPosts());
+            // results.concat(await context.dataSources.threads.getThreads());
+            // results.concat(await context.dataSources.categories.getCategories());
+            // return results;
+
+            return await context.dataSources.categories.getCategories();
+        },
+    },
+    SearchResult: {
+        __resolveType(obj: any, context: any, info: any) {
+            if (obj.description) {
+                return 'Category'
+            }
+            if (obj.categoryId) {
+                return 'Thread'
+            }
+            if (obj.threadId) {
+                return 'Post'
+            }
         }
     }
 };

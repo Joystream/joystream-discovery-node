@@ -60,3 +60,82 @@ Once the service is running you can use the apollo playground to interact
 with the query service.
 
 The service will be available on `http://localhost:4000`
+
+## Example Queries
+
+```graphql
+{
+  getCategories(text: "hello world"){
+    id
+    parentId
+    title
+    description
+    blockId
+    extrinsicIdx
+    eventIdx,
+    threads {
+      title
+      posts {
+        currentText
+      }
+    }
+  },
+  getPosts(text: "test"){
+    id
+    currentText
+  },
+  getThreads(text: "test"){
+    id
+    text,
+    posts {
+      currentText
+    }
+  },
+  searchFor(text: "test"){
+    __typename
+    ... on Category{
+      title
+      description
+    }
+    ... on Thread {
+      title
+      authorId
+    }
+    ... on Post {
+      currentText
+    }
+  }
+}
+```
+
+The above query is currently returning the following results when there is only one
+category in the database, and no threads or posts. The result highlights the use of
+unions, __resolveType and __typename.
+
+```json
+{
+  "data": {
+    "getCategories": [
+      {
+        "id": "1",
+        "parentId": null,
+        "title": "test title",
+        "description": "test description",
+        "blockId": 101,
+        "extrinsicIdx": 1,
+        "eventIdx": 1,
+        "threads": null
+      }
+    ],
+    "getPosts": [],
+    "getThreads": [],
+    "searchFor": [
+      {
+        "__typename": "Category",
+        "title": "test title",
+        "description": "test description"
+      }
+    ]
+  }
+}
+```
