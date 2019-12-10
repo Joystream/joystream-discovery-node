@@ -1,12 +1,14 @@
 import { Entity, Column, PrimaryColumn, BaseEntity } from "typeorm";
 
-@Entity()
+@Entity("joystream_forum_category")
 export class Category {
 
   @PrimaryColumn()
   id: number;
 
-  @Column()
+  @Column({
+    name: 'parent_id'
+  })
   parentId: number;
 
   @Column("text")
@@ -15,10 +17,14 @@ export class Category {
   @Column("text")
   description: string;
 
-  @Column()
+  @Column({
+    name: 'created_at_block_number'
+  })
   createdAtBlockNumber: number;
 
-  @Column()
+  @Column({
+    name: 'created_at_moment'
+  })
   createdAtMoment: number;
 
   @Column()
@@ -27,24 +33,38 @@ export class Category {
   @Column()
   archived: boolean;
 
-  @Column()
+  @Column({
+    name: 'num_direct_subcategories'
+  })
   numDirectSubcategories: number;
 
-  @Column()
+  @Column({
+    name: 'num_direct_moderated_threads'
+  })
   numDirectModeratedThreads: number;
 
-  @Column()
+  @Column({
+    name: 'position_in_parent_category'
+  })
   positionInParentCategory: number;
 
-  @Column()
+  @Column({
+    name: 'account_id'
+  })
   accountId: number;
 
-  @Column()
+  @Column({
+    name: 'block_id'
+  })
   blockId: number;
 
-  @Column()
+  @Column({
+    name: 'extrinsic_idx'
+  })
   extrinsicIdx: number;
 
-  @Column()
+  @Column({
+    name: 'event_idx'
+  })
   eventIdx: number;
 };
