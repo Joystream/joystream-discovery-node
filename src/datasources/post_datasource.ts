@@ -15,16 +15,25 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-export default {
-    Query: {
-        getCategories: async (root: any, args: any, context: any) => {
-            return await context.dataSources.categories.getCategories();
-        },
-        getThreads: async (root: any, args: any, context: any) => {
-            return await context.dataSources.threads.getThreads();
-        },
-        getPosts: async (root: any, args: any, context: any) => {
-            return await context.dataSources.posts.getPosts();
-        }
+import { DataSource } from 'apollo-datasource';
+import { Post } from '../entity/post';
+import { Connection } from 'typeorm';
+
+export default class PostDataSource extends DataSource {
+    private db: Connection;
+
+    constructor( connection: Connection ){
+        super();
+        this.db = connection;
     }
-};
+
+    initialize(config: any) {
+    }
+
+    // postReducer(post: post) {
+    // }
+
+    async getPosts(text: string) {
+        return this.db.manager.find(Post);
+    }
+}

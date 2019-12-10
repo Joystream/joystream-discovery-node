@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn, BaseEntity } from "typeorm";
+import { Entity, Column, PrimaryColumn } from "typeorm";
 
 @Entity("joystream_forum_category")
 export class Category {

@@ -62,6 +62,8 @@ type Thread {
   id: ID!
   """Title of the thread"""
   title: String
+  """Text in the thread"""
+  text: String
 
   """Index of this thread in the category"""
   nrInCategory: Int
@@ -150,7 +152,6 @@ type Query {
     
     """returns all Categories matching text in title or description"""
     getCategories(text: String): [Category]
-
 
     """returns all Threads matching text in title or description"""
     getThreads(text: String): [Thread]!
