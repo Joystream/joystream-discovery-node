@@ -51,9 +51,9 @@ async function getThreads(root: any, args: any, context: any) {
 }
 
 async function getPosts(root: any, args: any, context: any) {
-    return context.connection.manager.find(Post, 
-        {
-            current_text: Like(`%${args.text}%`)
+    return context.connection.manager.find(Post,
+        {        
+            currentText: Like(`%${args.text}%`)
         },
     );
 }

@@ -65,40 +65,41 @@ The service will be available on `http://localhost:4000`
 
 ```graphql
 {
-  getCategories(text: "hello world"){
+  getCategories(text: "descr") {
     id
     parentId
     title
     description
     blockId
     extrinsicIdx
-    eventIdx,
+    eventIdx
     threads {
       title
       posts {
         currentText
       }
     }
-  },
-  getPosts(text: "test"){
+  }
+  getPosts(text: "text") {
     id
     currentText
-  },
-  getThreads(text: "test"){
+  }
+  getThreads(text: "text") {
     id
-    text,
+    text
     posts {
       currentText
     }
-  },
-  searchFor(text: "test"){
+  }
+  searchFor(text: "text") {
     __typename
-    ... on Category{
+    ... on Category {
       title
       description
     }
     ... on Thread {
       title
+      text
       authorId
     }
     ... on Post {
@@ -127,13 +128,29 @@ unions, __resolveType and __typename.
         "threads": null
       }
     ],
-    "getPosts": [],
-    "getThreads": [],
+    "getPosts": [
+      {
+        "id": "1",
+        "currentText": "a post text"
+      }
+    ],
+    "getThreads": [
+      {
+        "id": "1",
+        "text": "a thread text...",
+        "posts": null
+      }
+    ],
     "searchFor": [
       {
-        "__typename": "Category",
-        "title": "test title",
-        "description": "test description"
+        "__typename": "Thread",
+        "title": "a thread title",
+        "text": "a thread text...",
+        "authorId": null
+      },
+      {
+        "__typename": "Post",
+        "currentText": "a post text"
       }
     ]
   }
