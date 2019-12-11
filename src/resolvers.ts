@@ -15,26 +15,65 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import { Category } from "./entity/category";
+import { Like } from "typeorm";
+import { Thread } from "./entity/thread";
+import { Post } from "./entity/post";
+
+async function getCategories(root: any, args: any, context: any) {
+    return context.connection.manager.find(Category, 
+        {
+            where: [
+                {
+                    title: Like(`%${args.text}%`)
+                },
+                {
+                    description: Like(`%${args.text}%`)
+                },
+            ]
+        }
+    );
+}
+
+async function getThreads(root: any, args: any, context: any) {
+    return context.connection.manager.find(Thread, 
+        {
+            where: [
+                {
+                    title: Like(`%${args.text}%`)
+                },
+                {
+                    text: Like(`%${args.text}%`)
+                },
+            ]
+        }
+    );
+}
+
+async function getPosts(root: any, args: any, context: any) {
+    return context.connection.manager.find(Post, 
+        {
+            current_text: Like(`%${args.text}%`)
+        },
+    );
+}
+
+async function searchFor(root: any, args: any, context: any) {
+    let results: any[] = [];
+    results = results.concat(
+        await getCategories(root, args, context),
+        await getThreads(root, args, context),
+        await getPosts(root, args, context)
+    );
+    return results;
+}
+
 export default {
     Query: {
-        getCategories: async (root: any, args: any, context: any) => {
-            return await context.dataSources.categories.getCategories();
-        },
-        getThreads: async (root: any, args: any, context: any) => {
-            return await context.dataSources.threads.getThreads();
-        },
-        getPosts: async (root: any, args: any, context: any) => {
-            return await context.dataSources.posts.getPosts();
-        },
-        searchFor: async (root: any, args: any, context: any) => {
-            // let results: any[] = [];
-            // results.concat(await context.dataSources.posts.getPosts());
-            // results.concat(await context.dataSources.threads.getThreads());
-            // results.concat(await context.dataSources.categories.getCategories());
-            // return results;
-
-            return await context.dataSources.categories.getCategories();
-        },
+        getCategories: getCategories,
+        getThreads: getThreads,
+        getPosts: getPosts,
+        searchFor: searchFor
     },
     SearchResult: {
         __resolveType(obj: any, context: any, info: any) {

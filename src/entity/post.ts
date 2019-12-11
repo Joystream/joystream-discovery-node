@@ -13,12 +13,12 @@ export class Post {
   threadId: number;
 
   @Column({
-      name: 'author_id'
+    name: 'author_id'
   })
   authorId: number;
 
   @Column({
-      name: 'nr_in_thread'
+    name: 'nr_in_thread'
   })
   nrInThread: number;
 
@@ -28,7 +28,7 @@ export class Post {
   currentText: string;
 
   @Column({
-      name: 'created_at_block_number'
+    name: 'created_at_block_number'
   })
   createdAtBlockNumber: number
 

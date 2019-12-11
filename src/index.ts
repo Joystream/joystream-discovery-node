@@ -19,9 +19,6 @@ import {createConnection} from "typeorm";
 import { ApolloServer, ServerInfo } from 'apollo-server';
 import { typeDefs } from './schema';
 import resolvers from './resolvers';
-import CategoryDataSource from "./datasources/category_datasource";
-import PostDataSource from "./datasources/post_datasource";
-import ThreadDataSource from "./datasources/thread_datasource";
 
 // Create connection to database
 createConnection().then(async connection => {
@@ -29,11 +26,9 @@ createConnection().then(async connection => {
   const server = new ApolloServer({ 
     typeDefs,
     resolvers,
-    dataSources: () => ({
-      categories: new CategoryDataSource(connection),
-      posts: new PostDataSource(connection),
-      threads: new ThreadDataSource(connection)
-    }),
+    context: () => ({
+      connection: connection
+    })
   });
 
   // start apollo server
