@@ -25,24 +25,3 @@ Object {
   },
 }
 `;
-
-exports[`Search threads query finds a match for existing string 1`] = `
-Object {
-  "data": Object {
-    "getThreads": Array [
-      Object {
-        "id": "1",
-        "text": "thread 1 text",
-        "title": "thread 1",
-      },
-    ],
-  },
-  "errors": undefined,
-  "extensions": undefined,
-  "http": Object {
-    "headers": Headers {
-      Symbol(map): Object {},
-    },
-  },
-}
-`;
