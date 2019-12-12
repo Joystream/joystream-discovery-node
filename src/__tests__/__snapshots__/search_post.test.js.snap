@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Search posts query finds a match for existing string 1`] = `
+Object {
+  "data": undefined,
+  "errors": Array [
+    [ValidationError: Cannot query field "current_text" on type "Post". Did you mean "currentText"?],
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;

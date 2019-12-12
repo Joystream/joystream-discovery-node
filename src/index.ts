@@ -15,25 +15,25 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import {createConnection} from "typeorm";
+import { getManager, createConnection } from "typeorm";
 import { ApolloServer, ServerInfo } from 'apollo-server';
 import { typeDefs } from './schema';
 import resolvers from './resolvers';
 
-// Create connection to database
-createConnection().then(async connection => {
-  // Create apollo server
-  const server = new ApolloServer({ 
-    typeDefs,
-    resolvers,
-    context: () => ({
-      connection: connection
-    })
-  });
+// create typeorm default connection
+const _ = createConnection();
 
-  // start apollo server
-  server.listen().then((url: ServerInfo) => {
-    console.log(`Server ready at ${url.url}`);
-  });
+// Create apollo server
+const server = new ApolloServer({ 
+  typeDefs,
+  resolvers,
+  context: async () => ({
+    manager: getManager(),
+  })
+});
 
-}).catch(error => console.log(error));
+// start apollo server
+server.listen().then((url: ServerInfo) => {
+  console.log(`Server ready at ${url.url}`);
+});
+

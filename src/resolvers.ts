@@ -21,7 +21,7 @@ import { Thread } from "./entity/thread";
 import { Post } from "./entity/post";
 
 async function getCategories(root: any, args: any, context: any) {
-    return context.connection.manager.find(Category, 
+    return context.manager.find(Category, 
         {
             where: [
                 {
@@ -36,7 +36,7 @@ async function getCategories(root: any, args: any, context: any) {
 }
 
 async function getThreads(root: any, args: any, context: any) {
-    return context.connection.manager.find(Thread, 
+    return context.manager.find(Thread, 
         {
             where: [
                 {
@@ -51,7 +51,7 @@ async function getThreads(root: any, args: any, context: any) {
 }
 
 async function getPosts(root: any, args: any, context: any) {
-    return context.connection.manager.find(Post,
+    return context.manager.find(Post,
         {        
             currentText: Like(`%${args.text}%`)
         },

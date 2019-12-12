@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Search categories query finds a match for existing string 1`] = `
+Object {
+  "data": Object {
+    "getCategories": Array [
+      Object {
+        "blockId": 1000,
+        "description": "category 1 description",
+        "eventIdx": 1,
+        "extrinsicIdx": 1,
+        "id": "1",
+        "parentId": null,
+        "threads": null,
+        "title": "category 1",
+      },
+    ],
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`Search threads query finds a match for existing string 1`] = `
+Object {
+  "data": Object {
+    "getThreads": Array [
+      Object {
+        "id": "1",
+        "text": "thread 1 text",
+        "title": "thread 1",
+      },
+    ],
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
