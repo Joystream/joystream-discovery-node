@@ -1,5 +1,7 @@
 # Joystream Discovery Node Graphql Schema and queries
 
+[![Build Status](https://travis-ci.org/ksinghf/joystream_discovery_node.svg?branch=master)](https://travis-ci.org/ksinghf/joystream_discovery_node)
+
 This project might evolve into a discovery node service that
 talks to the polkascan harvester database and exposes a graphql
 search interface.
