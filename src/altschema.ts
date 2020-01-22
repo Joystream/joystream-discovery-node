@@ -19,7 +19,7 @@ import { gql } from 'apollo-server';
 
 const typeDefs = gql`
 
-# From: apps/packages/joy-types/src/members.ts:Profile
+# Properties from: apps/packages/joy-types/src/members.ts:Profile
 # Preserving this structure as much as possible,
 # since its what the client already expects.
 type Profile {
@@ -44,10 +44,17 @@ type ChildPositionInParentCategory {
   child_nr_in_parent_category: string # instead of u32 due to overflow
 }
 
-# From: apps/packages/joy-types/src/forum.ts:CategoryType
-# Preserving this structure as much as possible,
-# since its what the client already expects.
-type CategoryData {
+type Category {
+
+  # Relations
+  parent: Category
+  author: Profile
+  threads: [Thread]
+  subcategories: [Category]
+
+  # Properties from: apps/packages/joy-types/src/forum.ts:CategoryType
+  # Preserving this structure as much as possible,
+  # since its what the client already expects.
   id: String # instead of u64 due to overflow
   title: String
   description: String
@@ -61,24 +68,22 @@ type CategoryData {
   moderator_id: string # AccountId
 }
 
-type Category {
-  parent: Category
-  author: Profile
-  threads: [Thread]
-  subcategories: [Category]
-  data: CategoryData
-}
-
 type ModerationActionType {
   moderated_at: BlockchainTimestamp
   moderator_id: string # AccountId
   rationale: string
 }
 
-# From: apps/packages/joy-types/src/forum.ts:ThreadType
-# Preserving this structure as much as possible,
-# since its what the client already expects.
-type ThreadData {
+type Thread {
+
+  # Relations
+  parent: Category
+  author: Profile
+  replies: [Post]
+
+  # Properties from: apps/packages/joy-types/src/forum.ts:ThreadType
+  # Preserving this structure as much as possible,
+  # since its what the client already expects.
   id: String # instead of u64 due to overflow
   title: String
   category_id: String # instead of u64 due to overflow
@@ -90,17 +95,15 @@ type ThreadData {
   author_id: String
 }
 
-type Thread {
-  parent: Category
-  author: Profile
-  replies: [Post]
-  data: ThreadData
-}
+type Post {
 
-# From: apps/packages/joy-types/src/forum.ts:PostType
-# Preserving this structure as much as possible,
-# since its what the client already expects.
-type PostData {
+  # Relations
+  thread: Thread
+  author: Profile
+
+  # Properties from: apps/packages/joy-types/src/forum.ts:PostType
+  # Preserving this structure as much as possible,
+  # since its what the client already expects.
   id: string # instead of u64 due to overflow
   thread_id: String # instead of u64 due to overflow
   nr_in_thread: string # instead of u32 due to overflow
@@ -109,39 +112,6 @@ type PostData {
   text_change_history: VecPostTextChange # FIXME what is this?
   created_at: BlockchainTimestamp
   author_id: string # AccountId
-}
-
-type Post {
-  thread: Thread
-  author: Profile
-  data: PostData
-}
-
-# FIXME replace with correct transaction data node expects
-type MembershipInput {
-  handle: String!
-  avatar_url: String
-  about: String
-}
-
-# FIXME replace with correct transaction data node expects
-type CategoryInput {
-  title: String!
-  description: String!
-  parentId: String # null -> root category
-}
-
-# FIXME replace with correct transaction data node expects
-type ThreadInput {
-  category: ID!
-  title: String!
-  text: String! # This becomes the first reply.
-}
-
-# FIXME replace with correct transaction data node expects
-type PostInput {
-  thread: ID!
-  text: String!
 }
 
 type Query {
@@ -157,32 +127,6 @@ type Query {
   getReplies(threadId: ID!): [Post]
 
   # TODO search stories and queries
-}
-
-type Mutation {
-
-  # Story: User can register as a account membership.
-  registerMembership(input: MembershipInput): Profile
-
-  # Story: User can update their account membership information.
-  editMembership(id: ID!, input: MembershipInput): Profile
-
-  # Story: A sudo user can create a new category.
-  # Story: A sudo user can create a new subcategory.
-  createCategory(input: CategoryInput): Category
-
-  # Story: A sudo user can edit a category.
-  # Story: A sudo user can edit a subcategory.
-  editCategory(id: ID!, input: CategoryInput): Category
-
-  # Story: A user can create threads for a category.
-  createThread(input: ThreadInput): Thread
-
-  # Story: A user reply to a thread.
-  createPost(input: PostInput): Post
-
-  # Story: A user can edit their reply.
-  editPost(id: ID!, input: PostInput): Post
 }
 `
 
