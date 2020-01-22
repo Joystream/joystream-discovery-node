@@ -19,14 +19,19 @@ import { gql } from 'apollo-server';
 
 const typeDefs = gql`
 
-# FIXME remove this and replace with correct data type
-type User {
-  id: ID!
-  sudoer: Boolean!
-  timestamp: String!
-  handle: String!
-  avatar_url: String
+# From: apps/packages/joy-types/src/members.ts:Profile
+# Preserving this structure as much as possible,
+# since its what the client already expects.
+type Profile {
+  id: String # instead of u64 due to overflow
+  handle: String
+  avatar_uri: String
   about: String
+  registered_at_block: BlockNumber # FIXME correct type
+  registered_at_time: Moment # FIXME correct type
+  entry: String # FIXME correct type?
+  suspended: Boolean
+  subscription: String # instead of u64 due to overflow
 }
 
 type BlockchainTimestamp {
@@ -58,7 +63,7 @@ type CategoryData {
 
 type Category {
   parent: Category
-  author: User
+  author: Profile
   threads: [Thread]
   subcategories: [Category]
   data: CategoryData
@@ -87,7 +92,7 @@ type ThreadData {
 
 type Thread {
   parent: Category
-  author: User
+  author: Profile
   replies: [Post]
   data: ThreadData
 }
@@ -108,7 +113,7 @@ type PostData {
 
 type Post {
   thread: Thread
-  author: User
+  author: Profile
   data: PostData
 }
 
@@ -157,10 +162,10 @@ type Query {
 type Mutation {
 
   # Story: User can register as a account membership.
-  registerMembership(input: MembershipInput): User
+  registerMembership(input: MembershipInput): Profile
 
   # Story: User can update their account membership information.
-  editMembership(id: ID!, input: MembershipInput): User
+  editMembership(id: ID!, input: MembershipInput): Profile
 
   # Story: A sudo user can create a new category.
   # Story: A sudo user can create a new subcategory.
