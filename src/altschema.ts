@@ -74,7 +74,7 @@ type Category {
 type ModerationActionType {
   moderated_at: BlockchainTimestamp
   moderator_id: string # AccountId
-  rationale: Text
+  rationale: string
 }
 
 # From: apps/packages/joy-types/src/forum.ts:ThreadType
@@ -95,28 +95,28 @@ type ThreadData {
 type Thread {
   parent: Category
   author: User
-  replies: [Reply]
+  replies: [Post]
   data: ThreadData
 }
 
-# From: apps/packages/joy-types/src/forum.ts:ReplyType
+# From: apps/packages/joy-types/src/forum.ts:PostType
 # Preserving this structure as much as possible,
 # since its what the client already expects.
-type ReplyData {
-  owner: String # AccountId
+type PostData {
+  id: string # Changed from u64 due to overflow
   thread_id: String # Changed from u64 due to overflow
-  text: String
+  nr_in_thread: string # Changed from u32 due to overflow
+  current_text: string
   moderation: ModerationActionType
+  text_change_history: VecPostTextChange # FIXME what is this?
+  created_at: BlockchainTimestamp
+  author_id: string # AccountId
 }
 
-# FIXME what is the difference between the following?
-# apps/packages/joy-types/src/forum.ts:ReplyType
-# apps/packages/joy-types/src/forum.ts:PostType
-
-type Reply {
+type Post {
   thread: Thread
   author: User
-  data: ReplyData
+  data: PostData
 }
 
 # FIXME replace with correct transaction data node expects
@@ -141,7 +141,7 @@ type ThreadInput {
 }
 
 # FIXME replace with correct transaction data node expects
-type ReplyInput {
+type PostInput {
   thread: ID!
   text: String!
 }
@@ -156,7 +156,7 @@ type Query {
   getThreads(categoryId: ID!): [Thread]
 
   # Story: A user can list replies for a thread.
-  getReplies(threadId: ID!): [Reply]
+  getReplies(threadId: ID!): [Post]
 
   # TODO search stories and queries
 }
@@ -181,10 +181,10 @@ type Mutation {
   createThread(input: ThreadInput): Thread
 
   # Story: A user reply to a thread.
-  createReply(input: ReplyInput): Reply
+  createPost(input: PostInput): Post
 
   # Story: A user can edit their reply.
-  editReply(id: ID!, input: ReplyInput): Reply
+  editPost(id: ID!, input: PostInput): Post
 }
 `
 
