@@ -1,4 +1,4 @@
-// Joystream Discovery Node is a graphql query server for 
+// Joystream Discovery Node is a graphql query server for
 // the Joystream Substrate SRML.
 // Copyright (C) 2020 Fabian Barkhau
 
@@ -19,10 +19,9 @@ import { gql } from 'apollo-server';
 
 const typeDefs = gql`
 
-# Properties from: apps/packages/joy-types/src/members.ts:Profile
-# Preserving this structure as much as possible,
-# since its what the client already expects.
-type Profile {
+type MembersProfile {
+
+  # From: apps/packages/joy-types/src/members.ts:Profile
   id: String # instead of u64 due to overflow
   handle: String
   avatar_uri: String
@@ -34,99 +33,103 @@ type Profile {
   subscription: String # instead of u64 due to overflow
 }
 
-type BlockchainTimestamp {
+# From: apps/packages/joy-types/src/forum.ts:ModerationActionType
+type ForumModerationAction {
+  moderated_at: ForumBlockchainTimestamp
+  moderator_id: string # AccountId
+  rationale: string
+}
+
+# From: apps/packages/joy-types/src/forum.ts:BlockchainTimestamp
+type ForumBlockchainTimestamp {
   block: String # instead of u64 due to overflow
   time: String # instead of Date.
 }
 
-type ChildPositionInParentCategory {
+# From: apps/packages/joy-types/src/forum.ts:ChildPositionInParentCategoryType
+type ForumChildPositionInParentCategory {
   parent_id: string # instead of u64 due to overflow
   child_nr_in_parent_category: string # instead of u32 due to overflow
 }
 
-type Category {
+type ForumCategory {
 
   # Relations
-  parent: Category
-  author: Profile
-  threads: [Thread]
-  subcategories: [Category]
+  parent: ForumCategory
+  author: MembersProfile
+  threads: [ForumThread]
+  subcategories: [ForumCategory]
 
-  # Properties from: apps/packages/joy-types/src/forum.ts:CategoryType
-  # Preserving this structure as much as possible,
-  # since its what the client already expects.
+  # From: apps/packages/joy-types/src/forum.ts:CategoryType
   id: String # instead of u64 due to overflow
   title: String
   description: String
-  created_at: BlockchainTimestamp
+  created_at: ForumBlockchainTimestamp
   deleted: Boolean
   archived: Boolean
   num_direct_subcategories: String # instead of u32 due to overflow
   num_direct_unmoderated_threads: String # instead of u32 due to overflow
   num_direct_moderated_threads: String # instead of u32 due to overflow
-  position_in_parent_category: ChildPositionInParentCategory 
+  position_in_parent_category: ForumChildPositionInParentCategory
   moderator_id: string # AccountId
 }
 
-type ModerationActionType {
-  moderated_at: BlockchainTimestamp
-  moderator_id: string # AccountId
-  rationale: string
-}
-
-type Thread {
+type ForumThread {
 
   # Relations
-  parent: Category
-  author: Profile
-  replies: [Post]
+  parent: ForumCategory
+  author: MembersProfile
+  replies: [ForumPost]
 
-  # Properties from: apps/packages/joy-types/src/forum.ts:ThreadType
-  # Preserving this structure as much as possible,
-  # since its what the client already expects.
+  # From: apps/packages/joy-types/src/forum.ts:ThreadType
   id: String # instead of u64 due to overflow
   title: String
   category_id: String # instead of u64 due to overflow
   nr_in_category: String # instead of u64 due to overflow
-  moderation: ModerationActionType
+  moderation: ForumModerationAction
   num_unmoderated_posts: String # instead of u64 due to overflow
   num_moderated_posts: String # instead of u64 due to overflow
-  created_at: BlockchainTimestamp
+  created_at: ForumBlockchainTimestamp
   author_id: String
 }
 
-type Post {
+type ForumPost {
 
   # Relations
-  thread: Thread
-  author: Profile
+  thread: ForumThread
+  author: MembersProfile
 
-  # Properties from: apps/packages/joy-types/src/forum.ts:PostType
-  # Preserving this structure as much as possible,
-  # since its what the client already expects.
+  # From: apps/packages/joy-types/src/forum.ts:PostType
   id: string # instead of u64 due to overflow
   thread_id: String # instead of u64 due to overflow
   nr_in_thread: string # instead of u32 due to overflow
   current_text: string
-  moderation: ModerationActionType
+  moderation: ForumModerationAction
   text_change_history: VecPostTextChange # FIXME what is this?
-  created_at: BlockchainTimestamp
+  created_at: ForumBlockchainTimestamp
   author_id: string # AccountId
 }
+
+union ForumSearchResult = ForumCategory | ForumThread | ForumPost
 
 type Query {
 
   # Story: A user can list categories.
   # Story: A user can list subcategories.
-  getCategories(id: ID): [Category]
+  getForumCategories(id: ID): [ForumCategory]!
 
   # Story: A user can list threads for a category.
-  getThreads(categoryId: ID!): [Thread]
+  getForumThreads(categoryId: ID!): [ForumThread]!
 
   # Story: A user can list replies for a thread.
-  getReplies(threadId: ID!): [Post]
+  getForumPosts(threadId: ID!): [ForumPost]!
 
-  # TODO search stories and queries
+  # Story: A user should be able to full text search over threads and posts.
+  searchForum(text: String!): [ForumSearchResult]!
+
+  # Story: A user should get the most recent posts in a category and over all.
+  recentForumPosts(categoryId: ID): [ForumPost]!
+
 }
 `
 
