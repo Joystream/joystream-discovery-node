@@ -20,6 +20,10 @@ import { ApolloServer, ServerInfo } from 'apollo-server';
 import { typeDefs } from './schema';
 import resolvers from './resolvers';
 
+// FIXME put this in some sensible config 
+const mainnetNode = 'wss://joystream.org/acropolis/rpc/'
+const testnetNode = 'wss://testnet.joystream.org/acropolis/rpc/'
+
 // create typeorm default connection
 const _ = createConnection();
 

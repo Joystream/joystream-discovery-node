@@ -17,14 +17,7 @@
 
 import { gql } from 'apollo-server';
 
-// FIXME put this somewhere sensible
-const testnetNode = 'wss://testnet.joystream.org/acropolis/rpc/'
-
 const typeDefs = gql`
-
-# FIXME properly align with
-#  apps/packages/joy-types/src/forum.ts
-#  substrate-forum-module/src/lib.rs
 
 # FIXME remove this and replace with correct data type
 type User {
@@ -37,28 +30,28 @@ type User {
 }
 
 type BlockchainTimestamp {
-  block: String # Changed from u64 due to overflow.
-  time: String # Changed from Date.
+  block: String # instead of u64 due to overflow
+  time: String # instead of Date.
 }
 
 type ChildPositionInParentCategory {
-  parent_id: string # Changed from u64 due to overflow.
-  child_nr_in_parent_category: string # Changed from u32 due to overflow.
+  parent_id: string # instead of u64 due to overflow
+  child_nr_in_parent_category: string # instead of u32 due to overflow
 }
 
 # From: apps/packages/joy-types/src/forum.ts:CategoryType
 # Preserving this structure as much as possible,
 # since its what the client already expects.
 type CategoryData {
-  id: String # Changed from u64 due to overflow.
+  id: String # instead of u64 due to overflow
   title: String
   description: String
   created_at: BlockchainTimestamp
   deleted: Boolean
   archived: Boolean
-  num_direct_subcategories: String # Changed from u32 due to overflow.
-  num_direct_unmoderated_threads: String # Changed from u32 due to overflow.
-  num_direct_moderated_threads: String # Changed from u32 due to overflow.
+  num_direct_subcategories: String # instead of u32 due to overflow
+  num_direct_unmoderated_threads: String # instead of u32 due to overflow
+  num_direct_moderated_threads: String # instead of u32 due to overflow
   position_in_parent_category: ChildPositionInParentCategory 
   moderator_id: string # AccountId
 }
@@ -81,13 +74,13 @@ type ModerationActionType {
 # Preserving this structure as much as possible,
 # since its what the client already expects.
 type ThreadData {
-  id: String # Changed from u64 due to overflow.
+  id: String # instead of u64 due to overflow
   title: String
-  category_id: String # Changed from u64 due to overflow.
-  nr_in_category: String # Changed from u64 due to overflow.
+  category_id: String # instead of u64 due to overflow
+  nr_in_category: String # instead of u64 due to overflow
   moderation: ModerationActionType
-  num_unmoderated_posts: String # Changed from u64 due to overflow.
-  num_moderated_posts: String # Changed from u64 due to overflow.
+  num_unmoderated_posts: String # instead of u64 due to overflow
+  num_moderated_posts: String # instead of u64 due to overflow
   created_at: BlockchainTimestamp
   author_id: String
 }
@@ -103,9 +96,9 @@ type Thread {
 # Preserving this structure as much as possible,
 # since its what the client already expects.
 type PostData {
-  id: string # Changed from u64 due to overflow
-  thread_id: String # Changed from u64 due to overflow
-  nr_in_thread: string # Changed from u32 due to overflow
+  id: string # instead of u64 due to overflow
+  thread_id: String # instead of u64 due to overflow
+  nr_in_thread: string # instead of u32 due to overflow
   current_text: string
   moderation: ModerationActionType
   text_change_history: VecPostTextChange # FIXME what is this?
