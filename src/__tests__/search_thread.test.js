@@ -4,7 +4,7 @@ import sinon from 'sinon';
 
 import { constructTestServer } from './__utils';
 import { EntityManager } from 'typeorm';
-import { ThreadDB } from '../../dist/src/entity/thread';
+import { ForumThread } from '../../dist/src/entity/thread';
 
 const SEARCH_THREADS = gql`
     query threadList($term: String) {
@@ -20,7 +20,7 @@ describe('Search threads query', () => {
 
     it('finds a match for existing string', async () => {
         const manager = sinon.createStubInstance(EntityManager);
-        let thread = new ThreadDB()
+        let thread = new ForumThread()
         thread.id = 1
         thread.title = 'thread 1'
         thread.text = 'thread 1 text'

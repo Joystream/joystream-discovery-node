@@ -7,7 +7,9 @@ import {
   ManyToOne,
   JoinColumn
 } from "typeorm";
-import { Thread } from "./thread";
+import { ForumThread } from "./thread";
+import { ForumCategory } from "./category";
+import { ForumModerationAction, ForumBlockchainTimestamp } from "./common";
 
 /*
 DESCRIBE joystream_forum_post; -- FIELD, TYPE, NULL, KEY, EXTRA
@@ -23,7 +25,13 @@ DESCRIBE joystream_forum_post; -- FIELD, TYPE, NULL, KEY, EXTRA
 'event_idx', 'int', 'YES', '', NULL, ''
 */
 @Entity("joystream_forum_post")
-export class Post {
+export class ForumPost {
+  public parent: ForumCategory;
+  public replies: [ForumPost];
+  public moderation: ForumModerationAction;
+  // tslint:disable-next-line: variable-name
+  public created_at: ForumBlockchainTimestamp;
+
   @PrimaryColumn()
   public id: string;
 
@@ -65,19 +73,19 @@ export class Post {
 
   /*
   @ManyToOne(
-    type => Thread,
+    type => ForumThread,
     thread => thread.posts
   )
   @JoinColumn({ name: "thread_id" })
-  public thread: Thread;
+  public thread: ForumThread;
   */
 }
 
 export async function findPost(
   manager: EntityManager,
   text: string
-): Promise<Post[]> {
-  return manager.find(Post, {
+): Promise<ForumPost[]> {
+  return manager.find(ForumPost, {
     current_text: Like(`%${text}%`)
   });
 }

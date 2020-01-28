@@ -6,7 +6,11 @@ import {
   PrimaryColumn,
   OneToMany
 } from "typeorm";
-import { Thread } from "./thread";
+import {
+  ForumBlockchainTimestamp,
+  ForumChildPositionInParentCategory
+} from "./common";
+import { ForumThread } from "./thread";
 
 /*
 
@@ -29,7 +33,15 @@ DESCRIBE joystream_forum_category; -- FIELD, TYPE, NULL, KEY, EXTRA
 'event_idx', 'int', 'YES', '', NULL, ''
 */
 @Entity("joystream_forum_category")
-export class Category {
+export class ForumCategory {
+  public parent: ForumCategory;
+  public threads: [ForumThread];
+  public subcategories: [ForumCategory];
+  // tslint:disable-next-line: variable-name
+  public created_at: ForumBlockchainTimestamp;
+  // tslint:disable-next-line: variable-name
+  public position_in_parent_category: ForumChildPositionInParentCategory;
+
   @PrimaryColumn()
   public id: string;
 
@@ -66,8 +78,11 @@ export class Category {
   public num_direct_unmoderated_threads: string;
 
   @Column()
+  @Column({
+    name: "position_in_parent_category"
+  })
   // tslint:disable-next-line: variable-name
-  public position_in_parent_category: string;
+  public position_in_parent_category_db: string;
 
   @Column()
   // tslint:disable-next-line: variable-name
@@ -97,8 +112,8 @@ export class Category {
 export async function findCategory(
   manager: EntityManager,
   text: string
-): Promise<Category[]> {
-  return manager.find(Category, {
+): Promise<ForumCategory[]> {
+  return manager.find(ForumCategory, {
     where: [
       {
         title: Like(`%${text}%`)
