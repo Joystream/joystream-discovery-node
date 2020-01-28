@@ -4,7 +4,7 @@ import sinon from 'sinon';
 
 import { constructTestServer } from './__utils';
 import { EntityManager } from 'typeorm';
-import { Post } from '../../dist/src/entity/post';
+import { PostDB } from '../../dist/src/entity/post';
 
 const SEARCH_POSTS = gql`
     query postList($term: String) {
@@ -24,7 +24,7 @@ describe('Search posts query', () => {
 
     it('finds a match for existing string', async () => {
         const manager = sinon.createStubInstance(EntityManager);
-        let post = new Post()
+        let post = new PostDB()
         post.id = 1
         post.title = 'post 1'
         post.text = 'post 1 text'

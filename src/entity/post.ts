@@ -1,58 +1,100 @@
-import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn } from "typeorm";
+import {
+  EntityManager,
+  Like,
+  Entity,
+  Column,
+  PrimaryColumn,
+  ManyToOne,
+  JoinColumn
+} from "typeorm";
 import { Thread } from "./thread";
 
+/*
+DESCRIBE joystream_forum_post; -- FIELD, TYPE, NULL, KEY, EXTRA
+'id', 'bigint', 'NO', 'PRI', NULL, ''
+'thread_id', 'bigint', 'YES', 'MUL', NULL, ''
+'author_id', 'varchar(64)', 'YES', '', NULL, ''
+'nr_in_thread', 'int', 'YES', '', NULL, ''
+'current_text', 'text', 'YES', '', NULL, ''
+'created_at_block_number', 'int', 'YES', '', NULL, ''
+'created_at_moment', 'bigint', 'YES', '', NULL, ''
+'block_id', 'int', 'NO', 'PRI', NULL, ''
+'extrinsic_idx', 'int', 'YES', '', NULL, ''
+'event_idx', 'int', 'YES', '', NULL, ''
+*/
 @Entity("joystream_forum_post")
 export class Post {
-
   @PrimaryColumn()
-  id: number;
+  public id: string;
 
-  @Column({
-    name: 'thread_id'
-  })
-  threadId: number;
+  @Column()
+  // tslint:disable-next-line: variable-name
+  public thread_id: string;
 
-  @Column({
-    name: 'author_id'
-  })
-  authorId: number;
+  @Column()
+  // tslint:disable-next-line: variable-name
+  public author_id: string;
 
-  @Column({
-    name: 'nr_in_thread'
-  })
-  nrInThread: number;
+  @Column()
+  // tslint:disable-next-line: variable-name
+  public nr_in_thread: string;
 
-  @Column({
-    name: 'current_text'
-  })
-  currentText: string;
+  @Column()
+  // tslint:disable-next-line: variable-name
+  public current_text: string;
 
-  @Column({
-    name: 'created_at_block_number'
-  })
-  createdAtBlockNumber: number
+  @Column()
+  // tslint:disable-next-line: variable-name
+  public created_at_block_number: string;
 
-  @Column({
-    name: 'created_at_moment'
-  })
-  createdAtMoment: number
+  @Column()
+  // tslint:disable-next-line: variable-name
+  public created_at_moment: string;
 
-  @Column({
-    name: 'block_id'
-  })
-  blockId: number;
+  @Column()
+  // tslint:disable-next-line: variable-name
+  public block_id: string;
 
-  @Column({
-    name: 'extrinsic_idx'
-  })
-  extrinsicIdx: number;
+  @Column()
+  // tslint:disable-next-line: variable-name
+  public extrinsic_idx: string;
 
-  @Column({
-    name: 'event_idx'
-  })
-  eventIdx: number;  
+  @Column()
+  // tslint:disable-next-line: variable-name
+  public event_idx: string;
 
-  @ManyToOne(type => Thread, thread => thread.posts)
-  @JoinColumn({name: 'thread_id'})
-  thread: Thread
+  /*
+  @ManyToOne(
+    type => Thread,
+    thread => thread.posts
+  )
+  @JoinColumn({ name: "thread_id" })
+  public thread: Thread;
+  */
 }
+
+export async function findPost(
+  manager: EntityManager,
+  text: string
+): Promise<Post[]> {
+  return manager.find(Post, {
+    current_text: Like(`%${text}%`)
+  });
+}
+
+/*
+  type ForumPost {
+    # Relations
+    thread: ForumThread
+    # author: MembersProfile # TODO add when harvester updated
+
+    # From: apps/packages/joy-types/src/forum.ts:PostType
+    id: string # instead of u64 due to overflow
+    thread_id: String # instead of u64 due to overflow
+    nr_in_thread: string # instead of u32 due to overflow
+    current_text: string
+    moderation: ForumModerationAction
+    created_at: ForumBlockchainTimestamp
+    author_id: string # AccountId
+  }
+*/

@@ -15,122 +15,116 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { gql } from 'apollo-server';
+import { gql } from "apollo-server";
 
 const typeDefs = gql`
+  ##  TODO add when harvester updated
+  ##  type MembersProfile {
+  ##
+  ##    # From: apps/packages/joy-types/src/members.ts:Profile
+  ##    id: String # instead of u64 due to overflow
+  ##    handle: String
+  ##    avatar_uri: String
+  ##    about: String
+  ##    registered_at_block: BlockNumber # FIXME correct type
+  ##    registered_at_time: Moment # FIXME correct type
+  ##    entry: String # FIXME correct type?
+  ##    suspended: Boolean
+  ##    subscription: String # instead of u64 due to overflow
+  ##  }
 
-type MembersProfile {
+  # From: apps/packages/joy-types/src/forum.ts:ModerationActionType
+  type ForumModerationAction {
+    moderated_at: ForumBlockchainTimestamp
+    moderator_id: string # AccountId
+    rationale: string
+  }
 
-  # From: apps/packages/joy-types/src/members.ts:Profile
-  id: String # instead of u64 due to overflow
-  handle: String
-  avatar_uri: String
-  about: String
-  registered_at_block: BlockNumber # FIXME correct type
-  registered_at_time: Moment # FIXME correct type
-  entry: String # FIXME correct type?
-  suspended: Boolean
-  subscription: String # instead of u64 due to overflow
-}
+  # From: apps/packages/joy-types/src/forum.ts:BlockchainTimestamp
+  type ForumBlockchainTimestamp {
+    block: String # instead of u64 due to overflow
+    time: String # instead of Date.
+  }
 
-# From: apps/packages/joy-types/src/forum.ts:ModerationActionType
-type ForumModerationAction {
-  moderated_at: ForumBlockchainTimestamp
-  moderator_id: string # AccountId
-  rationale: string
-}
+  # From: apps/packages/joy-types/src/forum.ts:ChildPositionInParentCategoryType
+  type ForumChildPositionInParentCategory {
+    parent_id: string # instead of u64 due to overflow
+    child_nr_in_parent_category: string # instead of u32 due to overflow
+  }
 
-# From: apps/packages/joy-types/src/forum.ts:BlockchainTimestamp
-type ForumBlockchainTimestamp {
-  block: String # instead of u64 due to overflow
-  time: String # instead of Date.
-}
+  type ForumCategory {
+    # Relations
+    parent: ForumCategory
+    # author: MembersProfile # TODO add when harvester updated
+    threads: [ForumThread]
+    subcategories: [ForumCategory]
 
-# From: apps/packages/joy-types/src/forum.ts:ChildPositionInParentCategoryType
-type ForumChildPositionInParentCategory {
-  parent_id: string # instead of u64 due to overflow
-  child_nr_in_parent_category: string # instead of u32 due to overflow
-}
+    # From: apps/packages/joy-types/src/forum.ts:CategoryType
+    id: String # instead of u64 due to overflow
+    title: String
+    description: String
+    created_at: ForumBlockchainTimestamp
+    deleted: Boolean
+    archived: Boolean
+    num_direct_subcategories: String # instead of u32 due to overflow
+    num_direct_unmoderated_threads: String # instead of u32 due to overflow
+    num_direct_moderated_threads: String # instead of u32 due to overflow
+    position_in_parent_category: ForumChildPositionInParentCategory
+    moderator_id: string # AccountId
+  }
 
-type ForumCategory {
+  type ForumThread {
+    # Relations
+    parent: ForumCategory
+    # author: MembersProfile # TODO add when harvester updated
+    replies: [ForumPost]
 
-  # Relations
-  parent: ForumCategory
-  author: MembersProfile
-  threads: [ForumThread]
-  subcategories: [ForumCategory]
+    # From: apps/packages/joy-types/src/forum.ts:ThreadType
+    id: String # instead of u64 due to overflow
+    title: String
+    category_id: String # instead of u64 due to overflow
+    nr_in_category: String # instead of u64 due to overflow
+    moderation: ForumModerationAction
+    num_unmoderated_posts: String # instead of u64 due to overflow
+    num_moderated_posts: String # instead of u64 due to overflow
+    created_at: ForumBlockchainTimestamp
+    author_id: String
+  }
 
-  # From: apps/packages/joy-types/src/forum.ts:CategoryType
-  id: String # instead of u64 due to overflow
-  title: String
-  description: String
-  created_at: ForumBlockchainTimestamp
-  deleted: Boolean
-  archived: Boolean
-  num_direct_subcategories: String # instead of u32 due to overflow
-  num_direct_unmoderated_threads: String # instead of u32 due to overflow
-  num_direct_moderated_threads: String # instead of u32 due to overflow
-  position_in_parent_category: ForumChildPositionInParentCategory
-  moderator_id: string # AccountId
-}
+  type ForumPost {
+    # Relations
+    thread: ForumThread
+    # author: MembersProfile # TODO add when harvester updated
 
-type ForumThread {
+    # From: apps/packages/joy-types/src/forum.ts:PostType
+    id: string # instead of u64 due to overflow
+    thread_id: String # instead of u64 due to overflow
+    nr_in_thread: string # instead of u32 due to overflow
+    current_text: string
+    moderation: ForumModerationAction
+    created_at: ForumBlockchainTimestamp
+    author_id: string # AccountId
+  }
 
-  # Relations
-  parent: ForumCategory
-  author: MembersProfile
-  replies: [ForumPost]
+  union ForumSearchResult = ForumCategory | ForumThread | ForumPost
 
-  # From: apps/packages/joy-types/src/forum.ts:ThreadType
-  id: String # instead of u64 due to overflow
-  title: String
-  category_id: String # instead of u64 due to overflow
-  nr_in_category: String # instead of u64 due to overflow
-  moderation: ForumModerationAction
-  num_unmoderated_posts: String # instead of u64 due to overflow
-  num_moderated_posts: String # instead of u64 due to overflow
-  created_at: ForumBlockchainTimestamp
-  author_id: String
-}
+  type Query {
+    # Story: A user can list categories.
+    # Story: A user can list subcategories.
+    getForumCategories(id: ID): [ForumCategory]!
 
-type ForumPost {
+    # Story: A user can list threads for a category.
+    getForumThreads(categoryId: ID!): [ForumThread]!
 
-  # Relations
-  thread: ForumThread
-  author: MembersProfile
+    # Story: A user can list replies for a thread.
+    getForumPosts(threadId: ID!): [ForumPost]!
 
-  # From: apps/packages/joy-types/src/forum.ts:PostType
-  id: string # instead of u64 due to overflow
-  thread_id: String # instead of u64 due to overflow
-  nr_in_thread: string # instead of u32 due to overflow
-  current_text: string
-  moderation: ForumModerationAction
-  text_change_history: VecPostTextChange # FIXME what is this?
-  created_at: ForumBlockchainTimestamp
-  author_id: string # AccountId
-}
+    # Story: A user should be able to full text search over threads and posts.
+    searchForum(text: String!): [ForumSearchResult]!
 
-union ForumSearchResult = ForumCategory | ForumThread | ForumPost
+    # Story: A user should get the most recent posts in a category and over all.
+    recentForumPosts(categoryId: ID, limit: Int): [ForumPost]!
+  }
+`;
 
-type Query {
-
-  # Story: A user can list categories.
-  # Story: A user can list subcategories.
-  getForumCategories(id: ID): [ForumCategory]!
-
-  # Story: A user can list threads for a category.
-  getForumThreads(categoryId: ID!): [ForumThread]!
-
-  # Story: A user can list replies for a thread.
-  getForumPosts(threadId: ID!): [ForumPost]!
-
-  # Story: A user should be able to full text search over threads and posts.
-  searchForum(text: String!): [ForumSearchResult]!
-
-  # Story: A user should get the most recent posts in a category and over all.
-  recentForumPosts(categoryId: ID): [ForumPost]!
-
-}
-`
-
-export {typeDefs};
+export { typeDefs };

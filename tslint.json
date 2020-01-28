@@ -1,0 +1,23 @@
+{
+  "linterOptions": {
+    "exclude": ["**/*.json"]
+  },
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:recommended",
+    "tslint-config-airbnb",
+    "tslint-config-prettier",
+    "tslint-plugin-prettier"
+  ],
+  "rules": {
+    "prettier": true,
+    "interface-name": false,
+    "import-name": false,
+    "max-classes-per-file": false,
+    "no-any": true,
+    "object-literal-sort-keys": false,
+    "ordered-imports": false,
+    "no-console": false
+  }
+}
+

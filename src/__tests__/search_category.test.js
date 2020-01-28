@@ -3,7 +3,7 @@ import gql from 'graphql-tag';
 import sinon from 'sinon';
 
 import { constructTestServer } from './__utils';
-import { Category } from '../../dist/src/entity/category';
+import { CategoryDB } from '../../dist/src/entity/category';
 import { EntityManager } from 'typeorm';
 
 const SEARCH_CATEGORIES = gql`
@@ -30,7 +30,7 @@ describe('Search categories query', () => {
 
     it('finds a match for existing string', async () => {
         const manager = sinon.createStubInstance(EntityManager);
-        let category = new Category()
+        let category = new CategoryDB()
         category.id = 1
         category.title = 'category 1'
         category.description = 'category 1 description'

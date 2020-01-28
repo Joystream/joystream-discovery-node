@@ -1,4 +1,4 @@
-// Joystream Discovery Node is a graphql query server for 
+// Joystream Discovery Node is a graphql query server for
 // the Joystream Substrate SRML.
 // Copyright (C) 2019 Kulpreet Singh
 
@@ -15,77 +15,94 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { Category } from "./entity/category";
-import { Like } from "typeorm";
-import { Thread } from "./entity/thread";
-import { Post } from "./entity/post";
+import { findCategory } from "./entity/category";
+import { findThreads } from "./entity/thread";
+import { findPost } from "./entity/post";
 
+// tslint:disable-next-line: no-any
 async function getCategories(root: any, args: any, context: any) {
-    return context.manager.find(Category, 
-        {
-            where: [
-                {
-                    title: Like(`%${args.text}%`)
-                },
-                {
-                    description: Like(`%${args.text}%`)
-                },
-            ]
-        }
-    );
+  return findCategory(context.manager, args.text);
 }
 
+// tslint:disable-next-line: no-any
 async function getThreads(root: any, args: any, context: any) {
-    return context.manager.find(Thread, 
-        {
-            where: [
-                {
-                    title: Like(`%${args.text}%`)
-                },
-                {
-                    text: Like(`%${args.text}%`)
-                },
-            ]
-        }
-    );
+  return findThreads(context.manager, args.text);
 }
 
+// tslint:disable-next-line: no-any
 async function getPosts(root: any, args: any, context: any) {
-    return context.manager.find(Post,
-        {        
-            currentText: Like(`%${args.text}%`)
-        },
-    );
+  return findPost(context.manager, args.text);
 }
 
+// tslint:disable-next-line: no-any
 async function searchFor(root: any, args: any, context: any) {
-    let results: any[] = [];
-    results = results.concat(
-        await getCategories(root, args, context),
-        await getThreads(root, args, context),
-        await getPosts(root, args, context)
-    );
-    return results;
+  // tslint:disable-next-line: no-any
+  let results: any[] = [];
+  results = results.concat(
+    await getCategories(root, args, context),
+    await getThreads(root, args, context),
+    await getPosts(root, args, context)
+  );
+  return results;
 }
 
 export default {
-    Query: {
-        getCategories: getCategories,
-        getThreads: getThreads,
-        getPosts: getPosts,
-        searchFor: searchFor
-    },
-    SearchResult: {
-        __resolveType(obj: any, context: any, info: any) {
-            if (obj.description) {
-                return 'Category'
-            }
-            if (obj.categoryId) {
-                return 'Thread'
-            }
-            if (obj.threadId) {
-                return 'Post'
-            }
-        }
+  Query: {
+    getCategories,
+    getThreads,
+    getPosts,
+    searchFor
+  },
+  SearchResult: {
+    // tslint:disable-next-line: all
+    __resolveType(obj: any, context: any, info: any) {
+      if (obj.description) {
+        return "Category";
+      }
+      if (obj.categoryId) {
+        return "Thread";
+      }
+      if (obj.threadId) {
+        return "Post";
+      }
     }
+  }
+  /*
+    ForumModerationAction {
+      // TODO just supply directly in parent?
+    }
+    ForumBlockchainTimestamp {
+      // TODO just supply directly in parent?
+    }
+    ForumChildPositionInParentCategory {
+      // TODO just supply directly in parent?
+    }
+    ForumCategory {
+      parent(root, args, context, info) {
+        return null // TODO implement
+      }
+      author(root, args, context, info) {
+        return null // TODO implement
+      }
+      threads(root, args, context, info) {
+        return null // TODO implement
+      }
+      subcategories(root, args, context, info) {
+        return null // TODO implement
+      }
+    }
+    ForumThread {
+      parent(root, args, context, info) {
+        return ForumCategory.findOne({ id: root.id });
+      }
+      replies(root, args, context, info) {
+        return ForumThread.findOne({ threadId: root.id });
+      }
+    }
+    ForumPost {
+      thread(root, args, context, info) {
+        return ForumThread.findOne({ threadId: root.id });
+      }
+    }
+    */
 };

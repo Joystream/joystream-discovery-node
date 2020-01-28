@@ -1,74 +1,111 @@
-import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn, OneToMany } from "typeorm";
-import { Category } from './category';
-import { Post } from './post';
+import {
+  EntityManager,
+  Like,
+  Entity,
+  Column,
+  PrimaryColumn,
+  ManyToOne,
+  JoinColumn,
+  OneToMany
+} from "typeorm";
+import { Category } from "./category";
+import { Post } from "./post";
 
+/*
+DESCRIBE joystream_forum_thread;
+'id', 'bigint', 'NO', 'PRI', NULL, ''
+'title', 'varchar(150)', 'YES', 'MUL', NULL, ''
+'text', 'text', 'YES', '', NULL, ''
+'category_id', 'bigint', 'YES', 'MUL', NULL, ''
+'nr_in_category', 'int', 'YES', '', NULL, ''
+'num_unmoderated_posts', 'int', 'YES', '', NULL, ''
+'num_moderated_posts', 'int', 'YES', '', NULL, ''
+'created_at_block_number', 'int', 'YES', '', NULL, ''
+'created_at_moment', 'bigint', 'YES', '', NULL, ''
+'author_id', 'varchar(64)', 'YES', '', NULL, ''
+'block_id', 'int', 'NO', 'PRI', NULL, ''
+'extrinsic_idx', 'int', 'YES', '', NULL, ''
+'event_idx', 'int', 'YES', '', NULL, ''
+*/
 @Entity("joystream_forum_thread")
 export class Thread {
-
   @PrimaryColumn()
-  id: number;
+  public id: string;
 
   @Column()
-  title: string;
+  public title: string;
 
   @Column()
-  text: string;
+  public text: string;
 
-  @Column({
-      name: 'category_id'
-  })
-  categoryId: number;
+  @Column()
+  // tslint:disable-next-line: variable-name
+  public category_id: string;
 
-  @Column({
-    name: 'nr_in_category'
-  })
-  nrInCategory: number;
+  @Column()
+  // tslint:disable-next-line: variable-name
+  public nr_in_category: string;
 
+  @Column()
+  // tslint:disable-next-line: variable-name
+  public num_unmoderated_posts: string;
 
-  @Column({
-    name: 'num_unmoderated_posts'
-  })
-  numUnmoderatedPosts: number;
+  @Column()
+  // tslint:disable-next-line: variable-name
+  public num_moderated_posts: string;
 
-  @Column({
-    name: 'num_moderated_posts'
-  })
-  numModeratedPosts: number;
+  @Column()
+  // tslint:disable-next-line: variable-name
+  public created_at_block_number: string;
 
-  @Column({
-      name: 'created_at_block_number'
-  })
-  createdAtBlockNumber: number
+  @Column()
+  // tslint:disable-next-line: variable-name
+  public created_at_moment: string;
 
-  @Column({
-    name: 'created_at_moment'
-  })
-  createdAtMoment: number
+  @Column()
+  // tslint:disable-next-line: variable-name
+  public author_id: string;
 
-  @Column({
-    name: 'author_id'
-  })
-  authorId: number;
+  @Column()
+  // tslint:disable-next-line: variable-name
+  public block_id: string;
 
-  @Column({
-    name: 'block_id'
-  })
-  blockId: number;
+  @Column()
+  // tslint:disable-next-line: variable-name
+  public extrinsic_idx: string;
 
-  @Column({
-    name: 'extrinsic_idx'
-  })
-  extrinsicIdx: number;
+  @Column()
+  // tslint:disable-next-line: variable-name
+  public event_idx: string;
 
-  @Column({
-    name: 'event_idx'
-  })
-  eventIdx: number;  
+  /*
+  @ManyToOne(
+    type => CategoryDB,
+    category => category.threads
+  )
+  @JoinColumn({ name: "category_id" })
+  public category: CategoryDB;
 
-  @ManyToOne(type => Category, category => category.threads)
-  @JoinColumn({name: 'category_id'})
-  category: Category
+  @OneToMany(
+    type => PostDB,
+    post => post.thread
+  )
+  public posts: PostDB[];
+  */
+}
 
-  @OneToMany(type => Post, post => post.thread)
-  posts: Post[]
+export async function findThreads(
+  manager: EntityManager,
+  text: string
+): Promise<Thread[]> {
+  return manager.find(Thread, {
+    where: [
+      {
+        title: Like(`%${text}%`)
+      },
+      {
+        text: Like(`%${text}%`)
+      }
+    ]
+  });
 }
