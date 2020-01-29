@@ -81,7 +81,7 @@ export class ForumPost {
   */
 }
 
-export async function findPost(
+export async function findPosts(
   manager: EntityManager,
   text: string
 ): Promise<ForumPost[]> {
@@ -89,20 +89,3 @@ export async function findPost(
     current_text: Like(`%${text}%`)
   });
 }
-
-/*
-  type ForumPost {
-    # Relations
-    thread: ForumThread
-    # author: MembersProfile # TODO add when harvester updated
-
-    # From: apps/packages/joy-types/src/forum.ts:PostType
-    id: string # instead of u64 due to overflow
-    thread_id: String # instead of u64 due to overflow
-    nr_in_thread: string # instead of u32 due to overflow
-    current_text: string
-    moderation: ForumModerationAction
-    created_at: ForumBlockchainTimestamp
-    author_id: string # AccountId
-  }
-*/

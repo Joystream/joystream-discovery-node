@@ -16,44 +16,61 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { findCategory } from "./entity/category";
-import { findThreads } from "./entity/thread";
-import { findPost } from "./entity/post";
+import { findThreads, getThread } from "./entity/thread";
+import { findPosts } from "./entity/post";
 
 // tslint:disable-next-line: no-any
-async function getCategories(root: any, args: any, context: any) {
+async function getForumCategories(root: any, args: any, context: any) {
   return findCategory(context.manager, args.text);
 }
 
 // tslint:disable-next-line: no-any
-async function getThreads(root: any, args: any, context: any) {
+async function getForumThreads(root: any, args: any, context: any) {
   return findThreads(context.manager, args.text);
 }
 
 // tslint:disable-next-line: no-any
-async function getPosts(root: any, args: any, context: any) {
-  return findPost(context.manager, args.text);
+async function getForumPosts(root: any, args: any, context: any) {
+  return findPosts(context.manager, args.text);
 }
 
 // tslint:disable-next-line: no-any
-async function searchFor(root: any, args: any, context: any) {
+async function searchForum(root: any, args: any, context: any) {
   // tslint:disable-next-line: no-any
   let results: any[] = [];
   results = results.concat(
-    await getCategories(root, args, context),
-    await getThreads(root, args, context),
-    await getPosts(root, args, context)
+    await getForumCategories(root, args, context),
+    await getForumThreads(root, args, context),
+    await getForumPosts(root, args, context)
   );
   return results;
 }
 
 export default {
-  Query: {
-    getCategories,
-    getThreads,
-    getPosts,
-    searchFor
+  ForumPost: {
+    // tslint:disable-next-line: all
+    created_at(root: any, args: any, context: any, info: any) {
+      return {
+        block: root.created_at_block_number,
+        time: root.created_at_moment
+      }
+    },
+    // tslint:disable-next-line: all
+    thread(root: any, args: any, context: any, info: any) {
+      return getThread(context.manager, root.thread_id)
+    },
+    // tslint:disable-next-line: all
+    moderation(root: any, args: any, context: any, info: any) {
+      return null // FIXME implement, where to get this data?
+    },
   },
-  SearchResult: {
+  Query: {
+    getForumCategories,
+    getForumThreads,
+    getForumPosts,
+    searchForum
+  },
+  ForumSearchResult: {
     // tslint:disable-next-line: all
     __resolveType(obj: any, context: any, info: any) {
       if (obj.description) {
@@ -67,42 +84,4 @@ export default {
       }
     }
   }
-  /*
-    ForumModerationAction {
-      // TODO just supply directly in parent?
-    }
-    ForumBlockchainTimestamp {
-      // TODO just supply directly in parent?
-    }
-    ForumChildPositionInParentCategory {
-      // TODO just supply directly in parent?
-    }
-    ForumCategory {
-      parent(root, args, context, info) {
-        return null // TODO implement
-      }
-      author(root, args, context, info) {
-        return null // TODO implement
-      }
-      threads(root, args, context, info) {
-        return null // TODO implement
-      }
-      subcategories(root, args, context, info) {
-        return null // TODO implement
-      }
-    }
-    ForumThread {
-      parent(root, args, context, info) {
-        return ForumCategory.findOne({ id: root.id });
-      }
-      replies(root, args, context, info) {
-        return ForumThread.findOne({ threadId: root.id });
-      }
-    }
-    ForumPost {
-      thread(root, args, context, info) {
-        return ForumThread.findOne({ threadId: root.id });
-      }
-    }
-    */
 };

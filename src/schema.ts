@@ -18,271 +18,95 @@
 import { gql } from "apollo-server";
 
 const typeDefs = gql`
-  """
-  Category created in Joystream Forum module
-  """
-  type Category {
-    """
-    ID of the ID in the Joystream blockchain
-    """
-    id: ID
-    """
-    ID of the parent Category in the Joystream blockchain
-    """
-    parentId: ID
-    """
-    Title of the Category
-    """
+  # From: apps/packages/joy-types/src/forum.ts:ModerationActionType
+  type ForumModerationAction {
+    moderated_at: ForumBlockchainTimestamp
+    moderator_id: String # AccountId
+    rationale: String
+  }
+
+  # From: apps/packages/joy-types/src/forum.ts:BlockchainTimestamp
+  type ForumBlockchainTimestamp {
+    block: String # instead of u64 due to overflow
+    time: String # instead of Date.
+  }
+
+  # From: apps/packages/joy-types/src/forum.ts:ChildPositionInParentCategoryType
+  type ForumChildPositionInParentCategory {
+    parent_id: String # instead of u64 due to overflow
+    child_nr_in_parent_category: String # instead of u32 due to overflow
+  }
+
+  type ForumCategory {
+    # Relations
+    parent: ForumCategory
+    threads: [ForumThread]
+    subcategories: [ForumCategory]
+
+    # From: apps/packages/joy-types/src/forum.ts:CategoryType
+    id: String # instead of u64 due to overflow
     title: String
-    """
-    Description of the Category
-    """
     description: String
-    """
-    The block number where the category was created in Joystream blockchain
-    """
-    createdAtBlockNumber: Int
-    """
-    The time stamp when the category was created in Joystream blockchain
-    """
-    createdAtMoment: Int
-    """
-    Deleted flag if the category has been deleted
-    """
+    created_at: ForumBlockchainTimestamp
     deleted: Boolean
-    """
-    Archived flag if the category has been archived
-    """
     archived: Boolean
-    """
-    Number of subcategories this category has
-    """
-    numDirectSubcategories: Int
-    """
-    Number of Threads that have at least one moderation action
-    """
-    numDirectModeratedThreads: Int
-    """
-    Position (index) of this category in the parent category
-    """
-    positionInParentCategory: Int
-    """
-    ID of the account that created this category
-    """
-    accountId: ID
-
-    """
-    ID of the block when this category was created
-    """
-    blockId: Int
-    """
-    ID of the extrinsic in the block when this category was created
-    """
-    extrinsicIdx: Int
-    """
-    ID of the event in the block when this category was created
-    """
-    eventIdx: Int
-
-    """
-    List of threads in this category
-    """
-    threads: [Thread!]
+    num_direct_subcategories: String # instead of u32 due to overflow
+    num_direct_unmoderated_threads: String # instead of u32 due to overflow
+    num_direct_moderated_threads: String # instead of u32 due to overflow
+    position_in_parent_category: ForumChildPositionInParentCategory
+    moderator_id: String # AccountId
   }
 
-  """
-  Thread in the forum module of Joystream blockchain
-  """
-  type Thread {
-    """
-    ID of the ID in the Joystream blockchain
-    """
-    id: ID!
-    """
-    Title of the thread
-    """
+  type ForumThread {
+    # Relations
+    parent: ForumCategory
+    # author: MembersProfile # TODO add when harvester updated
+    replies: [ForumPost]
+
+    # From: apps/packages/joy-types/src/forum.ts:ThreadType
+    id: String # instead of u64 due to overflow
     title: String
-    """
-    Text in the thread
-    """
-    text: String
-
-    """
-    Index of this thread in the category
-    """
-    nrInCategory: Int
-    """
-    Number of posts not yet moderated in this thread
-    """
-    numUnmoderatedPosts: Int
-    """
-    Number of posts moderated in this thread
-    """
-    numModeratedPosts: Int
-    """
-    The block number where the thread was created in Joystream blockchain
-    """
-    createdAtBlockNumber: Int
-    """
-    The time stamp when the thread was created in Joystream blockchain
-    """
-    createdAtMoment: Int
-    """
-    ID of the account that created this thread
-    """
-    authorId: ID
-
-    """
-    "Category this thread belongs to
-    """
-    category: Category
-    """
-    Posts in this thread
-    """
-    posts: [Post!]
-    """
-    List of moderation actions that have occured on this thread
-    """
-    moderationActions: [ModerationAction!]
+    category_id: String # instead of u64 due to overflow
+    nr_in_category: String # instead of u64 due to overflow
+    moderation: ForumModerationAction
+    num_unmoderated_posts: String # instead of u64 due to overflow
+    num_moderated_posts: String # instead of u64 due to overflow
+    created_at: ForumBlockchainTimestamp
+    author_id: String
   }
 
-  """
-  Post in the forum module of Joystream blockchain
-  """
-  type Post {
-    """
-    ID of the post
-    """
-    id: ID!
+  type ForumPost {
+    # Relations
+    thread: ForumThread
 
-    """
-    Index of this post in the thread
-    """
-    nrInThread: Int
-    """
-    Text of the post, currently available on the blockchain
-    """
-    currentText: String
-    """
-    The block number where the post was created in Joystream blockchain
-    """
-    createdAtBlockNumber: Int!
-    """
-    The time stamp when the post was created in Joystream blockchain
-    """
-    createdAtMoment: Int!
-
-    """
-    Edit history of the post
-    """
-    history: [PostTextChangeHistory!]
-
-    """
-    The thread this post belongs to
-    """
-    thread: Thread
+    # From: apps/packages/joy-types/src/forum.ts:PostType
+    id: String # instead of u64 due to overflow
+    thread_id: String # instead of u64 due to overflow
+    nr_in_thread: String # instead of u32 due to overflow
+    current_text: String
+    moderation: ForumModerationAction
+    created_at: ForumBlockchainTimestamp
+    author_id: String # AccountId
   }
 
-  """
-  Post text change history tracks the edit history of a post
-  """
-  type PostTextChangeHistory {
-    """
-    ID of the change; this is not from the blockchain
-    """
-    id: ID!
-    """
-    Text that the post had prior to this change
-    """
-    text: String!
-    """
-    The block number where the post was changed in Joystream blockchain
-    """
-    expiredAtBlockNumber: Int!
-    """
-    The time stamp when the post was changed in Joystream blockchain
-    """
-    expiredAtMoment: Int!
-
-    """
-    The post this change belongs to
-    """
-    post: Post!
-    """
-    ID of the account that made this change
-    """
-    authorId: Int!
-  }
-
-  """
-  A moderation action. It can occur on thread or on posts.
-  """
-  type ModerationAction {
-    """
-    ID of the moderation action
-    """
-    id: ID!
-    """
-    ID of the account moderating
-    """
-    moderatorId: Int
-    """
-    Reason for this moderation
-    """
-    moderationRationales: [ModerationRationale!]
-    """
-    The block number where the moderation action took place in Joystream blockchain
-    """
-    moderatedAtBlockNumber: Int
-    """
-    The time stamp where the moderation action took place in Joystream blockchain
-    """
-    moderatedAtMoment: Int
-  }
-
-  """
-  A moderation rationale.. It can occur on thread or on posts.
-  """
-  type ModerationRationale {
-    """
-    ID of the moderation rationale
-    """
-    id: ID!
-    """
-    The moderation action taken
-    """
-    moderationAction: ModerationAction!
-    """
-    Reason for the moderation action
-    """
-    rationale: Int
-  }
-
-  # union SearchResult = Category | Thread | Post | PostTextChangeHistory
-
-  union SearchResult = Category | Thread | Post
+  union ForumSearchResult = ForumCategory | ForumThread | ForumPost
 
   type Query {
-    """
-    returns all Categories matching text in title or description
-    """
-    getCategories(text: String): [Category]
+    # Story: A user can list categories.
+    # Story: A user can list subcategories.
+    getForumCategories(id: ID): [ForumCategory]!
 
-    """
-    returns all Threads matching text in title or description
-    """
-    getThreads(text: String): [Thread]!
+    # Story: A user can list threads for a category.
+    getForumThreads(categoryId: ID!): [ForumThread]!
 
-    """
-    returns all Posts matching text in title or description
-    """
-    getPosts(text: String): [Post]!
+    # Story: A user can list replies for a thread.
+    getForumPosts(threadId: ID!): [ForumPost]!
 
-    """
-    Searches Category, Thread and Post for matching text
-    For Posts, also searches PostTextChangeHistory
-    """
-    searchFor(text: String): [SearchResult]!
+    # Story: A user should be able to full text search over threads and posts.
+    searchForum(text: String!): [ForumSearchResult]!
+
+    # Story: A user should get the most recent posts in a category and over all.
+    recentForumPosts(categoryId: ID, limit: Int): [ForumPost]!
   }
 `;
 
