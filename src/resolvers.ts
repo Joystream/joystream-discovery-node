@@ -51,11 +51,11 @@ export default {
     // tslint:disable-next-line: all
     subcategories(root: any, args: any, context: any, info: any) {
       return getCategories(context.manager, root.id);
-	},
+    },
     // tslint:disable-next-line: all
     parent(root: any, args: any, context: any, info: any) {
       return getCategory(context.manager, root.parent_id);
-	},
+    },
     // tslint:disable-next-line: all
     threads(root: any, args: any, context: any, info: any) {
       return getCategoryThreads(context.manager, root.id);
@@ -73,11 +73,11 @@ export default {
     },
     // tslint:disable-next-line: all
     position_in_parent_category(root: any, args: any, context: any, info: any) {
-	  return {
-	    parent_id: root.parent_id,
-		child_nr_in_parent_category: root.position_in_parent_category_db,
-	  }
-	}
+      return {
+        parent_id: root.parent_id,
+        child_nr_in_parent_category: root.position_in_parent_category_db
+      };
+    }
   },
   ForumThread: {
     // tslint:disable-next-line: all

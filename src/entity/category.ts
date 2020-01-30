@@ -116,7 +116,7 @@ export async function getCategories(
   manager: EntityManager,
   parentId: string
 ): Promise<ForumCategory[]> {
-  return [] // FIXME implement
+  return []; // FIXME implement
 }
 
 export async function getCategory(
