@@ -15,9 +15,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { findCategory } from "./entity/category";
-import { findThreads, getThread } from "./entity/thread";
-import { findPosts } from "./entity/post";
+import { findCategory, getCategory } from "./entity/category";
+import { findThreads, getCategoryThreads, getThread } from "./entity/thread";
+import { findPosts, getThreadPosts } from "./entity/post";
 
 // tslint:disable-next-line: no-any
 async function getForumCategories(root: any, args: any, context: any) {
@@ -26,12 +26,12 @@ async function getForumCategories(root: any, args: any, context: any) {
 
 // tslint:disable-next-line: no-any
 async function getForumThreads(root: any, args: any, context: any) {
-  return findThreads(context.manager, args.text);
+  return getCategoryThreads(context.manager, args.categoryId);
 }
 
 // tslint:disable-next-line: no-any
 async function getForumPosts(root: any, args: any, context: any) {
-  return findPosts(context.manager, args.text);
+  return getThreadPosts(context.manager, args.threadId);
 }
 
 // tslint:disable-next-line: no-any
@@ -47,22 +47,39 @@ async function searchForum(root: any, args: any, context: any) {
 }
 
 export default {
+  ForumThread: {
+    // tslint:disable-next-line: all
+    created_at(root: any, args: any, context: any, info: any) {
+      return {
+        block: root.created_at_block_number,
+        time: root.created_at_moment
+      };
+    },
+    // tslint:disable-next-line: all
+    parent(root: any, args: any, context: any, info: any) {
+      return getCategory(context.manager, root.category_id);
+    },
+    // tslint:disable-next-line: all
+    replies(root: any, args: any, context: any, info: any) {
+      return getThreadPosts(context.manager, root.id);
+    }
+  },
   ForumPost: {
     // tslint:disable-next-line: all
     created_at(root: any, args: any, context: any, info: any) {
       return {
         block: root.created_at_block_number,
         time: root.created_at_moment
-      }
+      };
     },
     // tslint:disable-next-line: all
     thread(root: any, args: any, context: any, info: any) {
-      return getThread(context.manager, root.thread_id)
+      return getThread(context.manager, root.thread_id);
     },
     // tslint:disable-next-line: all
     moderation(root: any, args: any, context: any, info: any) {
-      return null // FIXME implement, where to get this data?
-    },
+      return null; // FIXME implement, where to get this data?
+    }
   },
   Query: {
     getForumCategories,

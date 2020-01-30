@@ -60,7 +60,6 @@ const typeDefs = gql`
   type ForumThread {
     # Relations
     parent: ForumCategory
-    # author: MembersProfile # TODO add when harvester updated
     replies: [ForumPost]
 
     # From: apps/packages/joy-types/src/forum.ts:ThreadType

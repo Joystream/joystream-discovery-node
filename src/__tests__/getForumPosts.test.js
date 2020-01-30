@@ -38,19 +38,34 @@ const POST_FIXTURE = {
 }
 
 const EXPECTED_OUTPUT = {
-
+    "getForumPosts": [
+    {
+      "thread": {
+        "title": "thread title"
+      },
+      "current_text": "post text",
+      "id": "post id",
+      "thread_id": "1",
+      "nr_in_thread": "rn in thread",
+      "author_id": "author id",
+      "moderation": null,
+      "created_at": {
+        "block": "created at block number",
+        "time": "created at moment"
+      }
+    }
+  ]
 }
 
 describe('getForumPosts', () => {
-  it('foo', async () => {
+  it('gets posts for given thread id', async () => {
     const manager = sinon.createStubInstance(EntityManager);
-    // manager.find.resolves([POST_FIXTURE]);
-    sinon.stub(dbPostModule, "findPosts").returns(Promise.resolve([POST_FIXTURE]));
+    sinon.stub(dbPostModule, "getThreadPosts").returns(Promise.resolve([POST_FIXTURE]));
     sinon.stub(dbThreadModule, "getThread").returns(Promise.resolve(THREAD_FIXTURE));
     const { server } = constructTestServer({context: { manager }});
     const {query} = createTestClient(server);
     const res = await query({query: QUERY_THREAD_POSTS, variables: {term: 'test term'}});
-    console.log("RES: ", JSON.stringify(res, null, 2))
+    // console.log("RES: ", JSON.stringify(res, null, 2))
+    expect(res['data']).toEqual(EXPECTED_OUTPUT)
   });
-
 });

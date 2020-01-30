@@ -81,6 +81,13 @@ export class ForumPost {
   */
 }
 
+export async function getThreadPosts(
+  manager: EntityManager,
+  threadId: string
+): Promise<ForumPost[]> {
+  return []; // FIXME implement
+}
+
 export async function findPosts(
   manager: EntityManager,
   text: string

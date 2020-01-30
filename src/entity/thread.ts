@@ -101,11 +101,18 @@ export class ForumThread {
   */
 }
 
+export async function getCategoryThreads(
+  manager: EntityManager,
+  categoryId: string
+): Promise<ForumThread | undefined> {
+  return undefined; // FIXME implement
+}
+
 export async function getThread(
   manager: EntityManager,
   id: string
 ): Promise<ForumThread | undefined> {
-  return manager.findOne(ForumThread, id)
+  return manager.findOne(ForumThread, id);
 }
 
 export async function findThreads(

@@ -109,6 +109,13 @@ export class ForumCategory {
   */
 }
 
+export async function getCategory(
+  manager: EntityManager,
+  id: string
+): Promise<ForumCategory | undefined> {
+  return manager.findOne(ForumCategory, id);
+}
+
 export async function findCategory(
   manager: EntityManager,
   text: string
