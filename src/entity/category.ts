@@ -71,13 +71,16 @@ export class ForumCategory {
 
   @Column()
   // tslint:disable-next-line: variable-name
-  public num_direct_moderated_threads: string;
+  public num_direct_subcategories: string;
 
   @Column()
   // tslint:disable-next-line: variable-name
   public num_direct_unmoderated_threads: string;
 
   @Column()
+  // tslint:disable-next-line: variable-name
+  public num_direct_moderated_threads: string;
+
   @Column({
     name: "position_in_parent_category"
   })
@@ -107,6 +110,13 @@ export class ForumCategory {
   )
   public threads: Thread[];
   */
+}
+
+export async function getCategories(
+  manager: EntityManager,
+  parentId: string
+): Promise<ForumCategory[]> {
+  return [] // FIXME implement
 }
 
 export async function getCategory(

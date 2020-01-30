@@ -15,13 +15,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { findCategory, getCategory } from "./entity/category";
+import { findCategory, getCategory, getCategories } from "./entity/category";
 import { findThreads, getCategoryThreads, getThread } from "./entity/thread";
 import { findPosts, getThreadPosts } from "./entity/post";
 
 // tslint:disable-next-line: no-any
 async function getForumCategories(root: any, args: any, context: any) {
-  return findCategory(context.manager, args.text);
+  return getCategories(context.manager, args.id);
 }
 
 // tslint:disable-next-line: no-any
@@ -47,6 +47,38 @@ async function searchForum(root: any, args: any, context: any) {
 }
 
 export default {
+  ForumCategory: {
+    // tslint:disable-next-line: all
+    subcategories(root: any, args: any, context: any, info: any) {
+      return getCategories(context.manager, root.id);
+	},
+    // tslint:disable-next-line: all
+    parent(root: any, args: any, context: any, info: any) {
+      return getCategory(context.manager, root.parent_id);
+	},
+    // tslint:disable-next-line: all
+    threads(root: any, args: any, context: any, info: any) {
+      return getCategoryThreads(context.manager, root.id);
+    },
+    // tslint:disable-next-line: all
+    moderator_id(root: any, args: any, context: any, info: any) {
+      return root.account_id;
+    },
+    // tslint:disable-next-line: all
+    created_at(root: any, args: any, context: any, info: any) {
+      return {
+        block: root.created_at_block_number,
+        time: root.created_at_moment
+      };
+    },
+    // tslint:disable-next-line: all
+    position_in_parent_category(root: any, args: any, context: any, info: any) {
+	  return {
+	    parent_id: root.parent_id,
+		child_nr_in_parent_category: root.position_in_parent_category_db,
+	  }
+	}
+  },
   ForumThread: {
     // tslint:disable-next-line: all
     created_at(root: any, args: any, context: any, info: any) {
