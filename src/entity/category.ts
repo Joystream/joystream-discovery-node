@@ -34,6 +34,8 @@ DESCRIBE joystream_forum_category; -- FIELD, TYPE, NULL, KEY, EXTRA
 */
 @Entity("joystream_forum_category")
 export class ForumCategory {
+  // tslint:disable-next-line: variable-name
+  public __typename = "ForumCategory";
   public parent: ForumCategory;
   public threads: [ForumThread];
   public subcategories: [ForumCategory];
@@ -126,7 +128,7 @@ export async function getCategory(
   return manager.findOne(ForumCategory, id);
 }
 
-export async function findCategory(
+export async function findCategories(
   manager: EntityManager,
   text: string
 ): Promise<ForumCategory[]> {

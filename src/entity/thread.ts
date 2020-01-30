@@ -30,6 +30,8 @@ DESCRIBE joystream_forum_thread; -- FIELD, TYPE, NULL, KEY, EXTRA
 */
 @Entity("joystream_forum_thread")
 export class ForumThread {
+  // tslint:disable-next-line: variable-name
+  public __typename = "ForumThread";
   public parent: ForumCategory;
   public replies: [ForumPost];
   public moderation: ForumModerationAction;
@@ -123,9 +125,6 @@ export async function findThreads(
     where: [
       {
         title: Like(`%${text}%`)
-      },
-      {
-        text: Like(`%${text}%`)
       }
     ]
   });

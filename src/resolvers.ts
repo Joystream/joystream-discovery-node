@@ -15,9 +15,19 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { findCategory, getCategory, getCategories } from "./entity/category";
-import { findThreads, getCategoryThreads, getThread } from "./entity/thread";
-import { findPosts, getThreadPosts } from "./entity/post";
+import {
+  ForumCategory,
+  findCategories,
+  getCategory,
+  getCategories
+} from "./entity/category";
+import {
+  ForumThread,
+  findThreads,
+  getCategoryThreads,
+  getThread
+} from "./entity/thread";
+import { ForumPost, findPosts, getThreadPosts } from "./entity/post";
 
 // tslint:disable-next-line: no-any
 async function getForumCategories(root: any, args: any, context: any) {
@@ -32,18 +42,6 @@ async function getForumThreads(root: any, args: any, context: any) {
 // tslint:disable-next-line: no-any
 async function getForumPosts(root: any, args: any, context: any) {
   return getThreadPosts(context.manager, args.threadId);
-}
-
-// tslint:disable-next-line: no-any
-async function searchForum(root: any, args: any, context: any) {
-  // tslint:disable-next-line: no-any
-  let results: any[] = [];
-  results = results.concat(
-    await getForumCategories(root, args, context),
-    await getForumThreads(root, args, context),
-    await getForumPosts(root, args, context)
-  );
-  return results;
 }
 
 export default {
@@ -113,24 +111,46 @@ export default {
       return null; // FIXME implement, where to get this data?
     }
   },
+  ForumSearchResult: {
+    // tslint:disable-next-line: all
+    __resolveType(obj: any, context: any, info: any) {
+      return obj.__typename;
+    }
+  },
   Query: {
     getForumCategories,
     getForumThreads,
     getForumPosts,
-    searchForum
-  },
-  ForumSearchResult: {
-    // tslint:disable-next-line: all
-    __resolveType(obj: any, context: any, info: any) {
-      if (obj.description) {
-        return "Category";
-      }
-      if (obj.categoryId) {
-        return "Thread";
-      }
-      if (obj.threadId) {
-        return "Post";
-      }
+
+    // tslint:disable-next-line: no-any
+    searchForum: async (root: any, args: any, context: any, info: any) => {
+      const categories = await findCategories(context.manager, args.text).then(
+        (fcs: ForumCategory[]) => {
+          for (const obj of fcs) {
+            obj.__typename = "ForumCategory";
+          }
+          return fcs;
+        }
+      );
+      const threads = await findThreads(context.manager, args.text).then(
+        (fts: ForumThread[]) => {
+          for (const obj of fts) {
+            obj.__typename = "ForumThread";
+          }
+          return fts;
+        }
+      );
+      const posts = await findPosts(context.manager, args.text).then(
+        (fps: ForumPost[]) => {
+          for (const obj of fps) {
+            obj.__typename = "ForumPost";
+          }
+          return fps;
+        }
+      );
+      // tslint:disable-next-line: no-any
+      const results: any[] = [];
+      return results.concat(categories, threads, posts);
     }
   }
 };

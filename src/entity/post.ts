@@ -26,6 +26,8 @@ DESCRIBE joystream_forum_post; -- FIELD, TYPE, NULL, KEY, EXTRA
 */
 @Entity("joystream_forum_post")
 export class ForumPost {
+  // tslint:disable-next-line: variable-name
+  public __typename = "ForumPost";
   public parent: ForumCategory;
   public replies: [ForumPost];
   public moderation: ForumModerationAction;
