@@ -104,21 +104,19 @@ export class ForumCategory {
   @Column()
   // tslint:disable-next-line: variable-name
   public event_idx: string;
-
-  /*
-  @OneToMany(
-    type => Thread,
-    thread => thread.category
-  )
-  public threads: Thread[];
-  */
 }
 
 export async function getCategories(
   manager: EntityManager,
   parentId: string
 ): Promise<ForumCategory[]> {
-  return []; // FIXME implement
+  return manager.find(ForumCategory, {
+    where: [
+      {
+        parent_id: parentId
+      }
+    ]
+  });
 }
 
 export async function getCategory(

@@ -86,28 +86,19 @@ export class ForumThread {
   @Column()
   // tslint:disable-next-line: variable-name
   public event_idx: string;
-
-  /*
-  @ManyToOne(
-    type => CategoryDB,
-    category => category.threads
-  )
-  @JoinColumn({ name: "category_id" })
-  public category: CategoryDB;
-
-  @OneToMany(
-    type => PostDB,
-    post => post.thread
-  )
-  public posts: PostDB[];
-  */
 }
 
 export async function getCategoryThreads(
   manager: EntityManager,
   categoryId: string
-): Promise<ForumThread | undefined> {
-  return undefined; // FIXME implement
+): Promise<ForumThread[]> {
+  return manager.find(ForumThread, {
+    where: [
+      {
+        category_id: categoryId
+      }
+    ]
+  });
 }
 
 export async function getThread(

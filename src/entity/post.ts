@@ -72,22 +72,19 @@ export class ForumPost {
   @Column()
   // tslint:disable-next-line: variable-name
   public event_idx: string;
-
-  /*
-  @ManyToOne(
-    type => ForumThread,
-    thread => thread.posts
-  )
-  @JoinColumn({ name: "thread_id" })
-  public thread: ForumThread;
-  */
 }
 
 export async function getThreadPosts(
   manager: EntityManager,
   threadId: string
 ): Promise<ForumPost[]> {
-  return []; // FIXME implement
+  return manager.find(ForumPost, {
+    where: [
+      {
+        thread_id: threadId
+      }
+    ]
+  });
 }
 
 export async function findPosts(
