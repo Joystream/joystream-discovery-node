@@ -26,7 +26,7 @@ const SEARCH_CATEGORIES = gql`
     }
 `;
 
-describe('Search categories query', () => {
+describe.skip('Search categories query', () => {
 
     it('finds a match for existing string', async () => {
         const manager = sinon.createStubInstance(EntityManager);

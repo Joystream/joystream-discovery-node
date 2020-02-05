@@ -16,7 +16,7 @@ const SEARCH_THREADS = gql`
     }
 `;
 
-describe('Search threads query', () => {
+describe.skip('Search threads query', () => {
 
     it('finds a match for existing string', async () => {
         const manager = sinon.createStubInstance(EntityManager);
