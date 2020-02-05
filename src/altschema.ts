@@ -1,6 +1,6 @@
 // Joystream Discovery Node is a graphql query server for
 // the Joystream Substrate SRML.
-// Copyright (C) 2019 Kulpreet Singh
+// Copyright (C) 2020 Fabian Barkhau
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published
@@ -18,11 +18,26 @@
 import { gql } from "apollo-server";
 
 const typeDefs = gql`
+  ##  TODO add when harvester updated
+  ##  type MembersProfile {
+  ##
+  ##    # From: apps/packages/joy-types/src/members.ts:Profile
+  ##    id: String # instead of u64 due to overflow
+  ##    handle: String
+  ##    avatar_uri: String
+  ##    about: String
+  ##    registered_at_block: BlockNumber # FIXME correct type
+  ##    registered_at_time: Moment # FIXME correct type
+  ##    entry: String # FIXME correct type?
+  ##    suspended: Boolean
+  ##    subscription: String # instead of u64 due to overflow
+  ##  }
+
   # From: apps/packages/joy-types/src/forum.ts:ModerationActionType
   type ForumModerationAction {
     moderated_at: ForumBlockchainTimestamp
-    moderator_id: String # AccountId
-    rationale: String
+    moderator_id: string # AccountId
+    rationale: string
   }
 
   # From: apps/packages/joy-types/src/forum.ts:BlockchainTimestamp
@@ -33,13 +48,14 @@ const typeDefs = gql`
 
   # From: apps/packages/joy-types/src/forum.ts:ChildPositionInParentCategoryType
   type ForumChildPositionInParentCategory {
-    parent_id: String # instead of u64 due to overflow
-    child_nr_in_parent_category: String # instead of u32 due to overflow
+    parent_id: string # instead of u64 due to overflow
+    child_nr_in_parent_category: string # instead of u32 due to overflow
   }
 
   type ForumCategory {
     # Relations
     parent: ForumCategory
+    # author: MembersProfile # TODO add when harvester updated
     threads: [ForumThread]
     subcategories: [ForumCategory]
 
@@ -54,12 +70,13 @@ const typeDefs = gql`
     num_direct_unmoderated_threads: String # instead of u32 due to overflow
     num_direct_moderated_threads: String # instead of u32 due to overflow
     position_in_parent_category: ForumChildPositionInParentCategory
-    moderator_id: String # AccountId
+    moderator_id: string # AccountId
   }
 
   type ForumThread {
     # Relations
     parent: ForumCategory
+    # author: MembersProfile # TODO add when harvester updated
     replies: [ForumPost]
 
     # From: apps/packages/joy-types/src/forum.ts:ThreadType
@@ -77,15 +94,16 @@ const typeDefs = gql`
   type ForumPost {
     # Relations
     thread: ForumThread
+    # author: MembersProfile # TODO add when harvester updated
 
     # From: apps/packages/joy-types/src/forum.ts:PostType
-    id: String # instead of u64 due to overflow
+    id: string # instead of u64 due to overflow
     thread_id: String # instead of u64 due to overflow
-    nr_in_thread: String # instead of u32 due to overflow
-    current_text: String
+    nr_in_thread: string # instead of u32 due to overflow
+    current_text: string
     moderation: ForumModerationAction
     created_at: ForumBlockchainTimestamp
-    author_id: String # AccountId
+    author_id: string # AccountId
   }
 
   union ForumSearchResult = ForumCategory | ForumThread | ForumPost

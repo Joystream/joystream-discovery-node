@@ -1,74 +1,143 @@
-import { Entity, Column, PrimaryColumn, OneToMany } from "typeorm";
-import { Thread } from './thread';
+import {
+  Like,
+  EntityManager,
+  Entity,
+  Column,
+  PrimaryColumn,
+  OneToMany
+} from "typeorm";
+import {
+  ForumBlockchainTimestamp,
+  ForumChildPositionInParentCategory
+} from "./common";
+import { ForumThread } from "./thread";
 
+/*
+
+DESCRIBE joystream_forum_category; -- FIELD, TYPE, NULL, KEY, EXTRA
+'id', 'bigint', 'NO', 'PRI', NULL, ''
+'parent_id', 'bigint', 'YES', 'MUL', NULL, ''
+'title', 'varchar(150)', 'YES', 'MUL', NULL, ''
+'description', 'varchar(150)', 'YES', 'MUL', NULL, ''
+'created_at_block_number', 'int', 'YES', '', NULL, ''
+'created_at_moment', 'bigint', 'YES', '', NULL, ''
+'deleted', 'tinyint(1)', 'YES', '', NULL, ''
+'archived', 'tinyint(1)', 'YES', '', NULL, ''
+'num_direct_subcategories', 'int', 'YES', '', NULL, ''
+'num_direct_unmoderated_threads', 'int', 'YES', '', NULL, ''
+'num_direct_moderated_threads', 'int', 'YES', '', NULL, ''
+'position_in_parent_category', 'int', 'YES', '', NULL, ''
+'account_id', 'varchar(64)', 'YES', '', NULL, ''
+'block_id', 'int', 'NO', 'PRI', NULL, ''
+'extrinsic_idx', 'int', 'YES', '', NULL, ''
+'event_idx', 'int', 'YES', '', NULL, ''
+*/
 @Entity("joystream_forum_category")
-export class Category {
+export class ForumCategory {
+  // tslint:disable-next-line: variable-name
+  public __typename = "ForumCategory";
+  public parent: ForumCategory;
+  public threads: [ForumThread];
+  public subcategories: [ForumCategory];
+  // tslint:disable-next-line: variable-name
+  public created_at: ForumBlockchainTimestamp;
+  // tslint:disable-next-line: variable-name
+  public position_in_parent_category: ForumChildPositionInParentCategory;
 
   @PrimaryColumn()
-  id: number;
-
-  @Column({
-    name: 'parent_id'
-  })
-  parentId: number;
-
-  @Column("text")
-  title: string;
-
-  @Column("text")
-  description: string;
-
-  @Column({
-    name: 'created_at_block_number'
-  })
-  createdAtBlockNumber: number;
-
-  @Column({
-    name: 'created_at_moment'
-  })
-  createdAtMoment: number;
+  public id: string;
 
   @Column()
-  deleted: boolean;
+  // tslint:disable-next-line: variable-name
+  public parent_id: string;
+
+  @Column("text")
+  public title: string;
+
+  @Column("text")
+  public description: string;
 
   @Column()
-  archived: boolean;
+  // tslint:disable-next-line: variable-name
+  public created_at_block_number: string;
+
+  @Column()
+  // tslint:disable-next-line: variable-name
+  public created_at_moment: string;
+
+  @Column()
+  public deleted: boolean;
+
+  @Column()
+  public archived: boolean;
+
+  @Column()
+  // tslint:disable-next-line: variable-name
+  public num_direct_subcategories: string;
+
+  @Column()
+  // tslint:disable-next-line: variable-name
+  public num_direct_unmoderated_threads: string;
+
+  @Column()
+  // tslint:disable-next-line: variable-name
+  public num_direct_moderated_threads: string;
 
   @Column({
-    name: 'num_direct_subcategories'
+    name: "position_in_parent_category"
   })
-  numDirectSubcategories: number;
+  // tslint:disable-next-line: variable-name
+  public position_in_parent_category_db: string;
 
-  @Column({
-    name: 'num_direct_moderated_threads'
-  })
-  numDirectModeratedThreads: number;
+  @Column()
+  // tslint:disable-next-line: variable-name
+  public account_id: string;
 
-  @Column({
-    name: 'position_in_parent_category'
-  })
-  positionInParentCategory: number;
+  @Column()
+  // tslint:disable-next-line: variable-name
+  public block_id: string;
 
-  @Column({
-    name: 'account_id'
-  })
-  accountId: number;
+  @Column()
+  // tslint:disable-next-line: variable-name
+  public extrinsic_idx: string;
 
-  @Column({
-    name: 'block_id'
-  })
-  blockId: number;
+  @Column()
+  // tslint:disable-next-line: variable-name
+  public event_idx: string;
+}
 
-  @Column({
-    name: 'extrinsic_idx'
-  })
-  extrinsicIdx: number;
+export async function getCategories(
+  manager: EntityManager,
+  parentId: string
+): Promise<ForumCategory[]> {
+  return manager.find(ForumCategory, {
+    where: [
+      {
+        parent_id: parentId
+      }
+    ]
+  });
+}
 
-  @Column({
-    name: 'event_idx'
-  })
-  eventIdx: number;
+export async function getCategory(
+  manager: EntityManager,
+  id: string
+): Promise<ForumCategory | undefined> {
+  return manager.findOne(ForumCategory, id);
+}
 
-  @OneToMany(type => Thread, thread => thread.category)
-  threads: Thread[]
-};
+export async function findCategories(
+  manager: EntityManager,
+  text: string
+): Promise<ForumCategory[]> {
+  return manager.find(ForumCategory, {
+    where: [
+      {
+        title: Like(`%${text}%`)
+      },
+      {
+        description: Like(`%${text}%`)
+      }
+    ]
+  });
+}
